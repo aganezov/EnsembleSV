@@ -1,0 +1,10 @@
+name: pbsv
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+  - r
+  - http://conda.anaconda.org/gurobi
+dependencies:
+  - pbsv=2.2.0=0
+prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/pbsv

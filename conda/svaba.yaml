@@ -1,0 +1,9 @@
+name: svaba
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+  - r
+  - http://conda.anaconda.org/gurobi
+prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/svaba
+

@@ -1,0 +1,109 @@
+tools_enabled_methods:
+  - "lumpy"
+  # - "manta"
+  # - "svaba"
+  # - "naibr"
+  # - "grocsvs"
+  # - "longranger"
+  - "pbsv"
+  - "sniffles"
+
+
+tools_read_type_to_method:
+  illumina: 
+    - "lumpy"
+    - "manta"
+    - "svaba"
+  linked:
+    - "naibr"
+    - "grocsv"
+    - "longranger"
+  long:
+    - "pbsv"
+    - "sniffles"
+
+tools_methods_conda_dir: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/conda"
+
+
+tools_methods:
+  samtools:
+    path: "samtools"
+    conda: "samtools.yaml"
+  sniffles:
+    path: "sniffles"
+    max_num_splits: 10
+    max_distance: 1000
+    min_length: 30
+    num_reads_report: -1
+    min_seq_size: 1000
+    min_support: 2
+    conda: "sniffles.yaml"
+    support_cnt_script:
+      path: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/scripts/support_cnt_filter_sniffles.py"
+      conda: "support_cnt.yaml"
+      python: "python"
+  pbsv:
+    path: "pbsv"
+    conda: "pbsv.yaml"
+    support_cnt_script:
+      path: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/scripts/support_cnt_filter_pbsv.py"
+      conda: "support_cnt.yaml"
+      python: "python"
+  lumpy:
+    path: "lumpyexpress"
+    conda: "lumpy.yaml"
+    extract_script: extractSplitReads_BwaMem
+    samtools:
+      path: "samtools"
+  manta:
+    config_script: configManta.py
+    mode: local
+    conda: "manta.yaml"
+  grocsvs:
+    path: "/scratch/groups/mschatz1/aganezov/miniconda3/envs/grocsv/bin/grocsvs" # NOT RELATED TO CONDA, MUST BE INSTALLED SEPARATELY
+    cluster_type: "multiprocessing"
+    processes: 16
+    conda: "grocsvs.yaml"
+    idba_ud:
+      path: "/scratch/groups/mschatz1/aganezov/miniconda3/bin/idba_ud"  # NOT RELATED TO CONDA. MUST BE INSTALLED SEPARATELY
+    samtools: 
+      path: "samtools"
+    tabix:
+      path: "tabix"
+    bgzip:
+      path: "bgzip"
+    bwa:
+      path: "bwa"
+  rck:
+    conda: "rck.yaml"
+    rck_adj_x2rck:
+      path: "rck-adj-x2rck"
+    rck_adj_process:
+      path: "rck-adj-process"
+    rck_adj_rck2x:
+      path: "rck-adj-rck2x"
+    call_set_script:
+      path: ""
+  naibr:
+    conda: "naibr.yaml"
+    python:
+      path: "python"
+    script:
+      path: "/home-4/saganez1@jhu.edu/work/aganezov/NAIBR-master/NAIBR.py"
+    min_mapq: 40
+    threads: 16
+  svaba:
+    conda: "svaba.yaml"
+    path: "svaba"
+    threads: 16
+  survivor:
+    conda: "survivor.yaml"
+    path: "SURVIVOR"
+    sv_type_consideration: 0
+    sv_strands_consideration: 1
+    sv_max_distance: 1000
+    min_caller_cnt: 1
+    distance_estimate: 0
+    min_sv_size: 45
+
+

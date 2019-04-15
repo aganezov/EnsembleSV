@@ -1,0 +1,87 @@
+data_input:
+  bams:
+    illumina:
+      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/10x/alignments/51n_10x.sort.bam" 
+    linked:
+      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/10x/alignments/51n_10x.sort.bam"
+    long:
+      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/ont/alignments/51N_ONT.sort.bam"
+  coverage:
+    base_51n_10x": 18
+    base_51N_ONT: 26
+  fasta:
+    ref: "/home-4/saganez1@jhu.edu/work/cancer/51/T/10x/ref/genome.fa"
+  index:
+    ref: "/home-4/saganez1@jhu.edu/work/cancer/51/T/10x/ref/genome.fa" 
+
+data_output:
+  sniffles:
+    dir: "sniffles"
+  pbsv: 
+    dir: "pbsv"
+  lumpy:
+    dir: "lumpy"
+  manta:
+    dir: "manta"
+  grocsvs:
+    dir: "grocsvs"
+  raw_sv_calls:
+    dir: "raw_sv_calls"
+  pre_merge_process:
+    rel_dir: "premerge"  # RELATIVE TO THE METHOD OUTPUT DIR
+    dir: "premerge_sv_calls"
+  merge:
+    dir: "merged_sv_calls"
+  naibr:
+    dir: "naibr"
+  longranger:
+    dir: "longranger"
+  svaba:
+    dir: "svaba"
+
+
+data_premerge:
+  min_len:
+    long: 50
+    illumina: 50
+    linked: 50
+  min_support_fraction:
+    long: 0.25
+  chr_include:
+      file: "/home-4/saganez1@jhu.edu/work/aganezov/RCK/rck/utils/adj/main_chrs.txt"
+  chr_exclude:
+    regions: 
+      - "Y" 
+
+data_post_merge:
+  groups:
+    - name: "short_reads"
+      entries: 
+        methods:
+          - "lumpy"
+          - "manta"
+          - "grocsvs"
+          - "naibr"
+          - "longranger"
+          - "svaba"
+      min_cnt: 2
+    - name: "ont"
+      entries: 
+        methods:
+          - "sniffles"
+          - "pbsv"
+        bases:
+          - "51N_ONT"
+      min_cnt: 1
+
+
+log_output:
+  sniffles:
+    dir: "sniffles/log"
+  pbsv:
+    dir: "psbv/log"
+  lumpy:
+    dir: "lumpy/log"
+
+data_sample_type: "N"
+data_sample_name: "51N"

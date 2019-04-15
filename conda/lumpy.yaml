@@ -1,0 +1,57 @@
+name: lumpy
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+  - r
+  - http://conda.anaconda.org/gurobi
+dependencies:
+  - bcftools=1.9=h4da6232_0
+  - blas=2.4=openblas
+  - bzip2=1.0.6=h470a237_2
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py27_0
+  - curl=7.64.0=h646f8bb_2
+  - gawk=4.2.1=h14c3975_1001
+  - htslib=1.9=hc238db4_4
+  - intel-openmp=2019.1=144
+  - krb5=1.16.3=h05b26f9_1001
+  - ldc=1.13.0=h02c9852_1
+  - libblas=3.8.0=4_openblas
+  - libcblas=3.8.0=4_openblas
+  - libcurl=7.64.0=h541490c_2
+  - libdeflate=1.0=h470a237_0
+  - libedit=3.1.20170329=hf8c457e_1001
+  - libffi=3.2.1=hf484d3e_1005
+  - libgcc-ng=7.3.0=hdf63c60_0
+  - libgfortran=3.0.0=1
+  - libgfortran-ng=7.2.0=hdf63c60_3
+  - liblapack=3.8.0=4_openblas
+  - liblapacke=3.8.0=4_openblas
+  - libopenblas=0.2.20=h9ac9557_7
+  - libssh2=1.8.1=h22169c7_0
+  - libstdcxx-ng=7.3.0=hdf63c60_0
+  - lumpy-sv=0.2.14a=hdfb72b2_2
+  - mkl=2019.1=144
+  - mkl_fft=1.0.10=py27_0
+  - mkl_random=1.0.2=py27_0
+  - ncurses=6.1=hf484d3e_1002
+  - numpy=1.16.2=py27h8b7e671_1
+  - numpy-base=1.14.3=py27h2b20989_0
+  - openblas=0.3.5=h9ac9557_1001
+  - openssl=1.1.1b=h14c3975_1
+  - pip=18.0=py27_1
+  - pysam=0.15.2=py27hb06f55c_2
+  - python=2.7.15=h721da81_1008
+  - readline=7.0=hf8c457e_1001
+  - sambamba=0.6.8=h89e63da_2
+  - samblaster=0.1.24=h2d50403_1
+  - samtools=1.9=h8571acd_11
+  - setuptools=40.0.0=py27_1
+  - sqlite=3.26.0=h7b6447c_0
+  - tk=8.6.9=h84994c4_1000
+  - wheel=0.31.1=py27_1
+  - xz=5.2.4=h470a237_1
+  - zlib=1.2.11=h470a237_3
+prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/lumpy
+
