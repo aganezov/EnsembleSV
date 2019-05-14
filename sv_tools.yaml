@@ -1,10 +1,10 @@
 tools_enabled_methods:
   - "lumpy"
-  # - "manta"
-  # - "svaba"
-  # - "naibr"
-  # - "grocsvs"
-  # - "longranger"
+  - "manta"
+  - "svaba"
+  - "naibr"
+  - "grocsvs"
+  - "longranger"
   - "pbsv"
   - "sniffles"
 
@@ -16,7 +16,7 @@ tools_read_type_to_method:
     - "svaba"
   linked:
     - "naibr"
-    - "grocsv"
+    - "grocsvs"
     - "longranger"
   long:
     - "pbsv"
@@ -82,6 +82,12 @@ tools_methods:
       path: "rck-adj-process"
     rck_adj_rck2x:
       path: "rck-adj-rck2x"
+    rck_adj_stats:
+      path: "rck-adj-stats"
+    rck_adg_infer:
+      path: "rck-adg-infer"
+    rck_adg_process:
+      path: "rck-adg-process"
     call_set_script:
       path: ""
   naibr:
@@ -91,10 +97,10 @@ tools_methods:
     script:
       path: "/home-4/saganez1@jhu.edu/work/aganezov/NAIBR-master/NAIBR.py"
     min_mapq: 40
-    threads: 16
+    threads: 8
   svaba:
     conda: "svaba.yaml"
-    path: "svaba"
+    path: "/home-4/saganez1@jhu.edu/work/aganezov/svaba/bin/svaba"
     threads: 16
   survivor:
     conda: "survivor.yaml"

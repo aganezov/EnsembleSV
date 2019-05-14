@@ -7,6 +7,8 @@ pbsv_output_dir = os.path.join(raw_sv_calls_dir, config["data_output"].get("pbsv
 
 
 def expected_pbsv_result_sv_files():
+	if "long" not in config["data_input"]["bams"]["long"]:
+		return []
 	long_read_bams = config["data_input"]["bams"]["long"]
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	result = [os.path.join(raw_sv_calls_dir, "raw", base + "_pbsv.vcf") for base in long_read_bases]
@@ -34,7 +36,7 @@ rule copy_pbsv_vcf_to_aggregate_dir:
 
 
 rule run_pbsv_call:
-	input: ref=config["data_input"]["fasta"]["ref"],
+	input: ref=config["data_input"]["fasta"]["long_ref"],
 		   signatures=os.path.join(pbsv_output_dir, "{base}_pbsv.svsig.gz")
 	output: os.path.join(pbsv_output_dir, "{base}_pbsv.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["pbsv"]["conda"])

@@ -10,6 +10,8 @@ lumpy_output_dir = os.path.join(raw_sv_calls_dir, config["data_output"].get("lum
 
 
 def expected_lumpy_result_sv_files():
+	if "illumina" not in config["data_input"]["bams"]:
+		return []
 	illumina_read_bams = config["data_input"]["bams"]["illumina"]
 	illumina_read_bases = [os.path.basename(name).split(".")[0] for name in illumina_read_bams]
 	return [os.path.join(raw_sv_calls_dir, "raw", base + "_lumpy.vcf") for base in illumina_read_bases]

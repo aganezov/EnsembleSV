@@ -7,6 +7,8 @@ sniffles_output_dir = os.path.join(raw_sv_calls_dir, config["data_output"].get("
 
 
 def expected_sniffles_result_sv_files():
+	if "long" not in config["data_input"]["bams"]:
+		return []
 	long_read_bams = config["data_input"]["bams"]["long"]
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	return [os.path.join(raw_sv_calls_dir, "raw", base + "_sniffles.vcf") for base in long_read_bases]

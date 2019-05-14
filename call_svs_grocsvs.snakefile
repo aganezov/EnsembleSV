@@ -8,6 +8,8 @@ raw_sv_calls_dir = config["data_output"].get("raw_sv_calls", {}).get("dir", "./r
 grocsvs_output_dir = os.path.join(raw_sv_calls_dir, config["data_output"].get("grocsvs", {}).get("dir", "grocsvs"))
 
 def expected_grocsvs_result_sv_files():
+	if "linked" not in config["data_input"]["bams"]:
+		return []
 	linked_read_bams = config["data_input"]["bams"]["linked"]
 	linked_read_bases = [os.path.basename(name).split(".")[0] for name in linked_read_bams]
 	return [os.path.join(raw_sv_calls_dir, "raw", base + "_grocsvs.vcf") for base in linked_read_bases]
