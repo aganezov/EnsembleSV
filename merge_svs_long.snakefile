@@ -32,12 +32,12 @@ def expected_long_sens():
 
 def greater_even_regex_for_number(number):
 	if number < 10:
-		result = "^([{number}-9]|\\d{2}|\\d{3}|\\d{4})$".format(number=number)
+		result = "^([{a}-9]|".format(a=number) + "\\d{2}|\\d{3}|\\d{4})$"
 	elif number < 100:
 		tens = int(number / 10)
 		deriv = number - int(number / 10) * 10
 		if number % 10 == 0:
-			result = "^([{tens}-9]\\d|\\d{3}|\\d{4})$".format(tens=tens)
+			result = "^([{tens}-9]".format(tens=tens) + "\\d|\\d{3}|\\d{4})$"
 		else:
 			result = "^({tens}[{deriv}-9]|".format(tens=tens, deriv=deriv)
 			if number < 90:
@@ -102,14 +102,14 @@ rule get_long_sens_rck:
 		samples=lambda wc: ",".join(wc.base + "_" + method for method in long_methods),
 		samples_source=lambda wc: ",".join(os.path.join(rck_dir, wc.base + "_" + method + ".sens.rck.adj.tsv") for method in long_methods),
 		suffix=lambda wc: wc.base + "_sens",
-		chr_include_file=config["data_premerge"]["chr_include"]["file"],
-		chr_exclude=lambda wc: ",".join(config["data_premerge"]["chr_exclude"]["regions"]),
+		chr_include="--chrs-include-file " + config["data_premerge"]["chr_include"]["file"],
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_premerge"]["chr_exclude"]["regions"])) if "chr_exclude" in config["data_premerge"] else "",
 	shell:
-		"{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} --chrs-include-file {params.chr_include_file} --chrs-exclude {params.chr_exclude} --samples-suffix-extra --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
+		"{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} {params.chr_include} {params.chr_exclude} --samples-suffix-extra --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
 
 
 rule get_long_sens_survivor:
-	input: 
+	input:
 		   vcfs=[os.path.join(rck_dir, "{base}_" + method + ".sens.rck.vcf") for method in long_methods],
 		   survivor_file=os.path.join(merged_dir, "{base}.sens.survivor")
 	output: os.path.join(merged_dir, "{base," + long_bases_regex +"}.sens.survivor.vcf")
@@ -123,7 +123,7 @@ rule get_long_sens_survivor:
 		distance_estimate=0,
 		min_sv_size=30
 	shell:
-		"{params.survivor} merge {input.survivor_file} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}" 
+		"{params.survivor} merge {input.survivor_file} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}"
 
 rule get_long_sens_survivor_config:
 	output: os.path.join(merged_dir, "{base," + long_bases_regex +"}.sens.survivor")
@@ -163,9 +163,9 @@ rule get_long_initial_rck:
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		method=lambda wc: wc.method,
 		suffix=lambda wc: wc.base + "_" + wc.method,
-		chr_include_file=config["data_premerge"]["chr_include"]["file"],
-		chr_exclude=lambda wc: ",".join(config["data_premerge"]["chr_exclude"]["regions"]),
+		chr_include="--chrs-include-file " + config["data_premerge"]["chr_include"]["file"],
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_premerge"]["chr_exclude"]["regions"])) if "chr_exclude" in config["data_premerge"] else "",
 		sample_string=lambda wc: "--sample " + wc.base.lower() if wc.method == "pbsv" else ""
 	shell:
-		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} --chrs-include-file {params.chr_include_file} --chrs-exclude {params.chr_exclude} {params.sample_string} -o {output}"
+		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_exclude} {params.sample_string} -o {output}"
 

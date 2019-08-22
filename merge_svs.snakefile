@@ -17,10 +17,7 @@ include: "merge_svs_short.snakefile"
 include: "call_svs.snakefile"
 
 long_read_bams = config["data_input"]["bams"]["long"] if "long" in config["data_input"]["bams"] else []
-# print(long_read_bams)
 long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams] if len(long_methods) > 0 and len(config["data_input"]["bams"]["long"]) > 0 else []
-# print(long_read_bases)
-# long_read_bases = []
 
 def merge_input_rck_vcf_files():
 	result = []
@@ -186,10 +183,10 @@ rule get_merged_sens_call_set_rck:
 		samples=lambda wc: ",".join(samples()),
 		samples_source=lambda wc: ",".join(merge_input_rck_files()),
 		suffix=lambda wc: config["data_sample_name"] + "_sens",
-		chr_include_file=config["data_premerge"]["chr_include"]["file"],
-		chr_exclude=lambda wc: ",".join(config["data_premerge"]["chr_exclude"]["regions"]),
+		chr_include="--chrs-include-file " + config["data_premerge"]["chr_include"]["file"],
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_premerge"]["chr_exclude"]["regions"])) if "chr_exclude" in config["data_premerge"] else "",
 	shell:
-		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} --chrs-include-file {params.chr_include_file} --chrs-exclude {params.chr_exclude} --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
+		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} {params.chr_include} {params.chr_exclude} --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
 
 rule get_merged_sens_call_set_survivour:
 	output: os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor.vcf")
