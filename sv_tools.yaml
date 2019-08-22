@@ -22,7 +22,7 @@ tools_read_type_to_method:
     - "pbsv"
     - "sniffles"
 
-tools_methods_conda_dir: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/conda"
+tools_methods_conda_dir: "sv/conda" # FIX with full path if ran from outside the master dir
 
 
 tools_methods:
@@ -39,14 +39,14 @@ tools_methods:
     min_support: 2
     conda: "sniffles.yaml"
     support_cnt_script:
-      path: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/scripts/support_cnt_filter_sniffles.py"
+      path: "scripts/support_cnt_filter_sniffles.py" # FIX with full path if ran from outside the master dir
       conda: "support_cnt.yaml"
       python: "python"
   pbsv:
     path: "pbsv"
     conda: "pbsv.yaml"
     support_cnt_script:
-      path: "/home-4/saganez1@jhu.edu/work/aganezov/pipelines/sv/scripts/support_cnt_filter_pbsv.py"
+      path: "scripts/support_cnt_filter_pbsv.py" # FIX with full path if ran from outside the master dir
       conda: "support_cnt.yaml"
       python: "python"
   lumpy:
@@ -60,12 +60,12 @@ tools_methods:
     mode: local
     conda: "manta.yaml"
   grocsvs:
-    path: "/scratch/groups/mschatz1/aganezov/miniconda3/envs/grocsv/bin/grocsvs" # NOT RELATED TO CONDA, MUST BE INSTALLED SEPARATELY
+    path: "/path/to//grocsvs" # FIX with real path. NOT RELATED TO CONDA, MUST BE INSTALLED SEPARATELY
     cluster_type: "multiprocessing"
     processes: 16
     conda: "grocsvs.yaml"
     idba_ud:
-      path: "/scratch/groups/mschatz1/aganezov/miniconda3/bin/idba_ud"  # NOT RELATED TO CONDA. MUST BE INSTALLED SEPARATELY
+      path: "/path/to/idba_ud"  # FIX with real path. NOT RELATED TO CONDA. MUST BE INSTALLED SEPARATELY
     samtools: 
       path: "samtools"
     tabix:
@@ -95,12 +95,12 @@ tools_methods:
     python:
       path: "python"
     script:
-      path: "/home-4/saganez1@jhu.edu/work/aganezov/NAIBR-master/NAIBR.py"
+      path: "/path/to/NAIBR-master/NAIBR.py" # FIX with real path. NOT RELATED TO CONDA. MUST BE INSTALLED SEPARATELY
     min_mapq: 40
     threads: 8
   svaba:
     conda: "svaba.yaml"
-    path: "/home-4/saganez1@jhu.edu/work/aganezov/svaba/bin/svaba"
+    path: "/path/to/svaba/bin/svaba" $ fIX with real path
     threads: 16
   survivor:
     conda: "survivor.yaml"
