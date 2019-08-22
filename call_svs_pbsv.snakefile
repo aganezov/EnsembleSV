@@ -7,7 +7,7 @@ pbsv_output_dir = os.path.join(raw_sv_calls_dir, config["data_output"].get("pbsv
 
 
 def expected_pbsv_result_sv_files():
-	if "long" not in config["data_input"]["bams"]["long"]:
+	if "long" not in config["data_input"]["bams"]:
 		return []
 	long_read_bams = config["data_input"]["bams"]["long"]
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
