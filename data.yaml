@@ -1,18 +1,19 @@
 data_input:
   bams:
-    illumina:
-      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/10x/alignments/51n_10x.sort.bam" 
-    linked:
-      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/10x/alignments/51n_10x.sort.bam"
-    long:
-      -  "/home-4/saganez1@jhu.edu/work/cancer/51/N/ont/alignments/51N_ONT.sort.bam"
+    illumina: # COMMENT OUT (with list entries) if no Illumina alignment BAM files
+      -  "FILL"
+    linked: # COMMENT OUT (with list entries) if no Linked alignment BAM files
+      -  "FILL"
+    long: # COMMENT OUT (with list entries) if no ONT/PacBio alignment BAM files
+      -  "FILL"
   coverage:
-    base_51n_10x": 18
-    base_51N_ONT: 26
+    # Fill with "key: value" average coverage, where "key" equals to the "base" of the alignment files (i.e., basename, or "everything before the extension" of the alignment file)
   fasta:
-    ref: "/home-4/saganez1@jhu.edu/work/cancer/51/T/10x/ref/genome.fa"
+    ref: "FILL" # if short/linked read alignments are present
+    long_ref: "FILL" # if long read alignments are present
   index:
-    ref: "/home-4/saganez1@jhu.edu/work/cancer/51/T/10x/ref/genome.fa" 
+    ref: "FILL" # if short/linked read alignments are present. Index of the fasta::ref value
+    long_ref: "FILL" # if long read alignments are present. Index of the fasta::ref value
 
 data_output:
   sniffles:
