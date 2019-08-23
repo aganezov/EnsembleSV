@@ -165,9 +165,9 @@ rule get_filtered_call_set:
 	params:
 		rck_adj_process=tools_methods["rck"]["rck_adj_process"]["path"],
 		re_regexes=lambda wc: " ".join(regex_extra_re_string([base + "_" + method + "_re" for method in long_methods], 
-									          greater_even_regex_for_number(int(config["data_input"]["coverage"][base] * config["data_merge"]["long_spec"]["min_support_fraction"]))) 
+									          greater_even_regex_for_number(int(config["data_input"]["coverage"][base] * config["data_merge_spec"]["long_spec"]["min_support_fraction"])))
 						   for base in long_read_bases) + " --keep-extra-field-regex \"" + config["data_sample_name"].lower() + "_sens_supporting_sources=" + config["data_sample_name"] + "_short_sens\"",
-		min_size=config["data_merge"]["min_size"]
+		min_size=config["data_merge_spec"]["min_len"]
 	shell:
 		"{params.rck_adj_process} filter {input} {params.re_regexes} --min-size {params.min_size} --size-extra-field svlen -o {output}"
 		# "{params.rck_adj_process} filter {input} --min-size {params.min_size} --size-extra-field svlen -o {output}"
@@ -183,10 +183,12 @@ rule get_merged_sens_call_set_rck:
 		samples=lambda wc: ",".join(samples()),
 		samples_source=lambda wc: ",".join(merge_input_rck_files()),
 		suffix=lambda wc: config["data_sample_name"] + "_sens",
-		chr_include="--chrs-include-file " + config["data_premerge"]["chr_include"]["file"],
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_premerge"]["chr_exclude"]["regions"])) if "chr_exclude" in config["data_premerge"] else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
 	shell:
-		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} {params.chr_include} {params.chr_exclude} --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
+		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file}  --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
 
 rule get_merged_sens_call_set_survivour:
 	output: os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor.vcf")
@@ -194,12 +196,12 @@ rule get_merged_sens_call_set_survivour:
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["survivor"]["conda"])
 	params:
 		survivor=tools_methods["survivor"]["path"],
-		max_distance=config["data_merge"]["survivor"]["max_distance"],
+		max_distance=config["data_merge_sens"]["survivor"]["max_distance"],
 		min_caller_cnt=1,
 		sv_type_consider=0,
 		sv_strands_consider=1,
 		distance_estimate=0,
-		min_sv_size=30
+		min_sv_size=lambda wc: min([config["data_merge_sens"]["min_len"]][key] for key in ["long", "illumina", "linked"])
 	shell:
 		"{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}" 
 
