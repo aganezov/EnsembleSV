@@ -41,39 +41,36 @@ data_output:
     dir: "svaba"
 
 
-data_premerge:
+data_merge_sens:
   min_len:
-    long: 50
-    illumina: 50
-    linked: 50
+    long: 30
+    illumina: 30
+    linked: 30
   min_support_fraction:
     long: 0.25
-  chr_include:
-      file: "/home-4/saganez1@jhu.edu/work/aganezov/RCK/rck/utils/adj/main_chrs.txt"
-  chr_exclude:
-    regions: 
-      - "Y" 
+  # chr_include:
+      # file: "/path/to/rck/utils/adj/main_chrs.txt" # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
+      # regions:
+      # - "X"                                        # Example. Fix with your own region CHR[:start-end] pattern
+  # chr_exclude:
+    # file: "/path/to/chr_list.txt"                  # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
+    # regions:
+    #  - "Y"                                         # Example. Fix with your own region CHR[:start-end] pattern
+  survivor:
+    max_distance: 1000
+  min_cnt:
+    short: 2
 
-data_post_merge:
-  groups:
-    - name: "short_reads"
-      entries: 
-        methods:
-          - "lumpy"
-          - "manta"
-          - "grocsvs"
-          - "naibr"
-          - "longranger"
-          - "svaba"
-      min_cnt: 2
-    - name: "ont"
-      entries: 
-        methods:
-          - "sniffles"
-          - "pbsv"
-        bases:
-          - "51N_ONT"
-      min_cnt: 1
+
+data_merge_spec:
+  min_len: 50
+  long_spec:
+    min_support_fraction: 0.25
+    min_len: 50
+  short_spec:
+    min_len: 50
+  survivor:
+      max_distance: 1000
 
 
 log_output:
@@ -84,5 +81,5 @@ log_output:
   lumpy:
     dir: "lumpy/log"
 
-data_sample_type: "N"
-data_sample_name: "51N"
+data_sample_type: "FILL with SAMPLE_TYPE (T or N)"
+data_sample_name: "FILL with SAMPLE NAME"
