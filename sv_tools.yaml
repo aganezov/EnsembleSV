@@ -100,16 +100,10 @@ tools_methods:
     threads: 8
   svaba:
     conda: "svaba.yaml"
-    path: "/path/to/svaba/bin/svaba" $ fIX with real path
+    path: "/path/to/svaba/bin/svaba" # fIX with real path
     threads: 16
   survivor:
     conda: "survivor.yaml"
     path: "SURVIVOR"
-    sv_type_consideration: 0
-    sv_strands_consideration: 1
-    sv_max_distance: 1000
-    min_caller_cnt: 1
-    distance_estimate: 0
-    min_sv_size: 45
 
 
