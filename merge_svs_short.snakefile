@@ -75,17 +75,19 @@ def short_rck_vcf():
 	return result
 
 def survivor_samples():
-	linked_read_bams = config["data_input"]["bams"]["linked"]
-	linked_read_bases = [os.path.basename(name).split(".")[0] for name in linked_read_bams]
-	illumina_read_bams = config["data_input"]["bams"]["illumina"]
-	illumina_read_bases = [os.path.basename(name).split(".")[0] for name in illumina_read_bams]
 	result = []
-	for method in illumina_methods:
-		for base in illumina_read_bases:
-			result.append(base + "_" + method)
-	for method in linked_methods:
-		for base in linked_read_bases:
-			result.append(base + "_" + method)
+	if "linked" in config["data_input"]["bams"]:
+		linked_read_bams = config["data_input"]["bams"]["linked"]
+		linked_read_bases = [os.path.basename(name).split(".")[0] for name in linked_read_bams]
+		for method in linked_methods:
+			for base in linked_read_bases:
+				result.append(base + "_" + method)
+	if "illumina" in config["data_input"]["bams"]:
+		illumina_read_bams = config["data_input"]["bams"]["illumina"]
+		illumina_read_bases = [os.path.basename(name).split(".")[0] for name in illumina_read_bams]
+		for method in illumina_methods:
+			for base in illumina_read_bases:
+				result.append(base + "_" + method)
 	return result	
 
 
