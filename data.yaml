@@ -46,6 +46,7 @@ data_merge_sens:
     long: 30
     illumina: 30
     linked: 30
+    short: 30
   min_support_fraction:
     long: 0.25
   # chr_include:
