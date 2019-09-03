@@ -31,6 +31,8 @@ def expected_illumina():
 	return result
 
 def expected_short():
+	if "illumina" in config["data_input"]["bams"] or "linked" in config["data_input"]["bams"]:
+		return []
 	result = os.path.join(aggreagate_merged_dir, config["data_sample_name"] + "_short.sens.rck.vcf")
 	return result
 
