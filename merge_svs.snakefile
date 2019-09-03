@@ -197,7 +197,7 @@ rule get_merged_sens_call_set_survivour:
 		sv_type_consider=0,
 		sv_strands_consider=1,
 		distance_estimate=0,
-		min_sv_size=lambda wc: min([config["data_merge_sens"]["min_len"]][key] for key in ["long", "illumina", "linked"])
+		min_sv_size=lambda wc: min([config["data_merge_sens"]["min_len"][key] for key in ["long", "illumina", "linked"]])
 	shell:
 		"{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}" 
 
