@@ -36,7 +36,7 @@ rule run_naibr_workflow:
 	output: os.path.join(naibr_output_dir, "{base}", "NAIBR_SVs.bedpe")
 	message: "executing NAIBR with config {input}"
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["naibr"]["conda"])
-	threads: tools_methods["naibr"].get("threads", 16)
+	threads: tools_methods["naibr"].get("threads", 15)
 	params:
 		python=tools_methods["naibr"].get("python", {}).get("path", "python"),
 		naibr_script=tools_methods["naibr"].get("script", {}).get("path", "NAIBR.py")

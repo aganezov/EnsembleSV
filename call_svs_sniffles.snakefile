@@ -44,7 +44,7 @@ rule run_sniffles:
 		min_length=tools_methods["sniffles"].get("min_length", 30),
 		num_reads_report=tools_methods["sniffles"].get("num_reads_report", -1),
 		min_seq_size=tools_methods["sniffles"].get("min_seq_size", 1000)
-	threads: 16
+	threads: config["tools_methods"]["sniffles"].get("threads", 15)
 	message: "running sniffles with {threads} threads on {input}"
 	shell:
 		"{params.sniffles} -m {input} -v {output} --threads {threads} --min_support {params.min_support} --max_distance {params.max_distance} --max_num_splits {params.max_num_splits} --min_length {params.min_length} --num_reads_report {params.num_reads_report} --min_seq_size {params.min_seq_size} --report_seq"

@@ -31,6 +31,7 @@ tools_methods:
     conda: "samtools.yaml"
   sniffles:
     path: "sniffles"
+    threads: 15
     max_num_splits: 10
     max_distance: 1000
     min_length: 30
@@ -62,7 +63,7 @@ tools_methods:
   grocsvs:
     path: "/path/to//grocsvs" # FIX with real path. NOT RELATED TO CONDA, MUST BE INSTALLED SEPARATELY
     cluster_type: "multiprocessing"
-    processes: 16
+    processes: 15
     conda: "grocsvs.yaml"
     idba_ud:
       path: "/path/to/idba_ud"  # FIX with real path. NOT RELATED TO CONDA. MUST BE INSTALLED SEPARATELY
@@ -101,7 +102,7 @@ tools_methods:
   svaba:
     conda: "svaba.yaml"
     path: "/path/to/svaba/bin/svaba" # fIX with real path
-    threads: 16
+    threads: 15
   survivor:
     conda: "survivor.yaml"
     path: "SURVIVOR"
