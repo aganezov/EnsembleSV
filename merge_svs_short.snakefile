@@ -251,3 +251,5 @@ rule get_short_initial_rck_generic:
 		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
 
 ruleorder: get_short_initial_rck_longranger_generic > get_short_initial_svaba_generic > get_short_initial_rck_generic
+
+include: "call_svs.snakefile"

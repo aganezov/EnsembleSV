@@ -173,3 +173,4 @@ rule get_long_initial_rck:
 	shell:
 		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} {params.sample_string} -o {output}"
 
+include: "call_svs.snakefile"
