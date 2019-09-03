@@ -12,10 +12,6 @@ raw_sv_calls_dir = os.path.join(config["data_output"]["raw_sv_calls"]["dir"], "r
 long_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["long"]]
 short_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["illumina"] + config["tools_read_type_to_method"]["linked"]]
 
-include: "merge_svs_long.snakefile"
-include: "merge_svs_short.snakefile"
-include: "call_svs.snakefile"
-
 long_read_bams = config["data_input"]["bams"]["long"] if "long" in config["data_input"]["bams"] else []
 long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams] if len(long_methods) > 0 and len(config["data_input"]["bams"]["long"]) > 0 else []
 
@@ -213,3 +209,7 @@ rule get_merged_sens_call_set_survivour_config:
 		with open(output[0], "wt") as dest:
 			for file_name in input:
 				print(file_name, file=dest)
+
+include: "merge_svs_long.snakefile"
+include: "merge_svs_short.snakefile"
+include: "call_svs.snakefile"
