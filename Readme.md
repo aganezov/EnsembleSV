@@ -49,8 +49,49 @@ Basic workflow can be described as follows:
 Installation
 =
 
+Clone this repository into the **assests** location (i.e., place, where the **reference** version of the workflow resides):
+
+````
+git clone https://github.com/aganezov/EnsembleSV.git
+```` 
+
 Usage
 =
+**EnsembleSV** is designed to be utilized one-sample at a time.
+We assume that `path` is the location, where the analysis will take place. 
+We also assume that `soft/EnsembleSV` is the path for the cloned repository.
+Then:
+````bash
+cd path
+mkdir sv
+ln -s soft/EnsembleSV/*.snakefile .
+ln -s soft/EnsembleSV/conda
+ln -s soft/EnsembleSV/scripts
+cp soft/EnsembleSV/data.yaml .
+cp soft/EnsembleSV/sv_tools.yaml .
+````
+
+Now update the copied `data.yaml` and `sv_tools.yaml` files with the experiment-specific information. 
+On detailed instruction for updating `data.yaml` file, please, refer to respective data [docs](./docs/data.md).
+On detailed instruction for updating `sv_tools.yaml` file, please, refer to respective tools [docs](./docs/sv_tools.md).
+
+Running **EnsembleSV** can be accomplished via *snakemake* simple command:
+````
+snakemake -s merge_svs.snakefile
+````
+
+If you want to separate method-specific SV calling and subsequent merging, you can do so as follows:
+````
+snakemake -s call_svs.snakefile
+snakemake -s merge_svs.snakefile
+```` 
+
+Running method-specific SV calling can be achieved via:
+````
+snakemake -s call_svs_*method*.snakefile
+````
+
+Note that for every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.  
 
 Contribution
 =
