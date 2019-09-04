@@ -16,8 +16,8 @@ Supported SV inference methods:
 * *NAIBR*
 
 **long (ONT/PacBio) reads**
-* **Sniffles**
-* **PBSV**
+* *Sniffles*
+* *PBSV*
 
 Supported sequencing data is basically described by what type of data the SV inference methods support. 
 Current supported input data includes:
@@ -57,7 +57,7 @@ git clone https://github.com/aganezov/EnsembleSV.git
 
 Usage
 =
-**EnsembleSV** is designed to be utilized one-sample at a time.
+*EnsembleSV* is designed to be utilized one-sample at a time.
 We assume that `path` is the location, where the analysis will take place. 
 We also assume that `soft/EnsembleSV` is the path for the cloned repository.
 Then:
@@ -75,7 +75,7 @@ Now update the copied `data.yaml` and `sv_tools.yaml` files with the experiment-
 On detailed instruction for updating `data.yaml` file, please, refer to respective data [docs](./docs/data.md).
 On detailed instruction for updating `sv_tools.yaml` file, please, refer to respective tools [docs](./docs/sv_tools.md).
 
-Running **EnsembleSV** can be accomplished via *snakemake* simple command:
+Running *EnsembleSV* can be accomplished via *snakemake* simple command:
 ````
 snakemake -s merge_svs.snakefile
 ````
@@ -99,8 +99,8 @@ If you wish to contribute to the EnsembleSV project, please, contact Sergey Agan
 
 Issues
 =
-If you identify any issues and/or bugs with the EnsembleSV pipeline, or want to suggest an enhancement to it, please, use the repository-associated [issue tracker](https://github.com/aganezov/EnsembleSV/issues).  
+If you identify any issues and/or bugs with the *EnsembleSV* pipeline, or want to suggest an enhancement to it, please, use the repository-associated [issue tracker](https://github.com/aganezov/EnsembleSV/issues).  
 
 Citation
 =
-If you use EnsembleSV in your research, please cite the following manuscript [TBA]().
+If you use *EnsembleSV* in your research, please cite the following manuscript [TBA]().
