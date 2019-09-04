@@ -1,7 +1,7 @@
 EnsembleSV
 =
 A general pipeline for ensemble calling *Structural Variations* (SVs), also referred to as *Novel Adjacencies* (NAs) with multiple methods 
-in short-read paired-end Illumina/linked sequencing data as well as in 3rd-generation long ONt/PacBio reads.
+in short-read paired-end Illumina/linked sequencing data as well as in 3rd-generation long ONЕ/PacBio reads.
 
 Supported SV inference methods:
 
