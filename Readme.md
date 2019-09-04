@@ -63,7 +63,7 @@ We also assume that `soft/EnsembleSV` is the path for the cloned repository.
 Then:
 ````bash
 cd path
-mkdir sv
+mkdir sv && cd sv
 ln -s soft/EnsembleSV/*.snakefile .
 ln -s soft/EnsembleSV/conda
 ln -s soft/EnsembleSV/scripts
