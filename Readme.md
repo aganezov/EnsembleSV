@@ -8,7 +8,7 @@ Supported SV inference methods:
 **short reads**
 * *SvABA*
 * *Manta*
-* *Lumpa*
+* *Lumpy*
 
 **linked reads**
 * *LongRanger*
