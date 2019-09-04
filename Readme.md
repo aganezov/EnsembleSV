@@ -95,9 +95,12 @@ Note that for every data type (short Illumina, linked, and long reads) only SV i
 
 Contribution
 =
+If you wish to contribute to the EnsembleSV project, please, contact Sergey Aganezov via email [sergeyaganezovjr(at)gmail.com](mailto:segreyaganezovjr@gmail.com) or submit a pull request with suggested additions/changes.
 
 Issues
 =
+If you identify any issues and/or bugs with the EnsembleSV pipeline, or want to suggest an enhancement to it, please, use the repository-associated [issue tracker](https://github.com/aganezov/EnsembleSV/issues).  
 
 Citation
 =
+If you use EnsembleSV in your research, please cite the following manuscript [TBA]().
