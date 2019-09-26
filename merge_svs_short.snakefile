@@ -101,11 +101,12 @@ rule get_short_sens_vcf:
 	input: os.path.join(rck_dir, config["data_sample_name"] + "_short.sens.rck.adj.tsv")
 	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + "_short.sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + "_short.sens.rck.vcf.log")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: config["data_sample_name"] + "_short_sens",
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
 
 
 rule get_short_sens_rck:
@@ -113,6 +114,7 @@ rule get_short_sens_rck:
 		   rck_files=short_rck(),
 	output: os.path.join(rck_dir, config["data_sample_name"] + "_short.sens.rck.adj.tsv")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(rck_dir, "log", config["data_sample_name"] + "_short.sens.rck.adj.tsv.log")
 	params:
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		samples=lambda wc: ",".join(survivor_samples()),
@@ -123,13 +125,14 @@ rule get_short_sens_rck:
 		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
 		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
-		"{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} --samples-suffix-extra --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
+		"{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} --samples-suffix-extra --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output} &> {log}"
 
 
 rule get_short_sens_survivor:
 	input: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor")
 	output: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor.vcf"),
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["survivor"]["conda"])
+	log: os.path.join(merged_dir, "log", config["data_sample_name"] + "_short.sens.survivor.vcf.log"),
 	params:
 		survivor=tools_methods["survivor"]["path"],
 		max_distance=config["data_merge_sens"]["survivor"]["max_distance"],
@@ -139,7 +142,7 @@ rule get_short_sens_survivor:
 		distance_estimate=0,
 		min_sv_size=lambda wc: min([config["data_merge_sens"]["min_len"]["illumina"], config["data_merge_sens"]["min_len"]["linked"]]),
 	shell:
-		"{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}" 
+		"{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output} &> {log}"
 
 rule get_short_survivor_config:
 	output: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor")
@@ -153,27 +156,30 @@ rule get_short_sens_vcf_for_survivor:
 	input: os.path.join(rck_dir, "{base}_{method}.sens.rck.adj.tsv")
 	output: os.path.join(rck_dir, "{base}_{method," + short_methods_regex + "}.sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(rck_dir, "log", "{base}_{method," + short_methods_regex + "}.sens.rck.vcf.log")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_" + wc.method,
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
 
 
 rule get_short_sens_rck_for_survivor:
 	input: os.path.join(rck_dir, "{base}_{method}.rck.adj.tsv")
 	output: os.path.join(rck_dir, "{base}_{method," + short_methods_regex +"}.sens.rck.adj.tsv")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(rck_dir, "log", "{base}_{method," + short_methods_regex +"}.sens.rck.adj.tsv")
 	params:
 		rck_adj_process=tools_methods["rck"]["rck_adj_process"]["path"],
 		min_size=config["data_merge_sens"]["min_len"]["short"],
 	shell:
-		"{params.rck_adj_process} filter {input} --size-extra-field svlen --min-size {params.min_size} -o {output}"
+		"{params.rck_adj_process} filter {input} --size-extra-field svlen --min-size {params.min_size} -o {output} &> {log}"
 
 rule get_short_initial_naibr:
 	output: os.path.join(rck_dir, "{base}_naibr.rck.adj.tsv")
 	input: os.path.join(raw_sv_calls_dir, "{base}_naibr.bedpe")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: 	os.path.join(rck_dir, "log", "{base}_naibr.rck.adj.tsv.log")
 	params:
 		method="naibr",
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
@@ -183,7 +189,7 @@ rule get_short_initial_naibr:
 		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
 		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
-		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
+		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output} &> {log}"
 
 
 rule get_short_initial_rck_longranger:
@@ -191,15 +197,17 @@ rule get_short_initial_rck_longranger:
 		   large=os.path.join(rck_dir, "{base}_longranger_large_svs.rck.adj.tsv")
 	output: dels=os.path.join(rck_dir, "{base}_longranger.rck.adj.tsv")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: 	os.path.join(rck_dir, "log", "{base}_longranger.rck.adj.tsv.log")
 	params:
 		rck_adj_process=tools_methods["rck"]["rck_adj_process"]["path"],
 	shell:
-		"{params.rck_adj_process} cat {input.large} {input.dels} -o {output}"
+		"{params.rck_adj_process} cat {input.large} {input.dels} -o {output} &> {log}"
 
 rule get_short_initial_rck_longranger_generic:
 	output: os.path.join(rck_dir, "{base}_longranger_{sv_type,(large_svs|dels)}.rck.adj.tsv")
 	input: os.path.join(raw_sv_calls_dir, "{base}_longranger_{sv_type}.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(rck_dir, "{base}_longranger_{sv_type,(large_svs|dels)}.rck.adj.tsv.log")
 	params:
 		method="longranger",
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
@@ -209,7 +217,7 @@ rule get_short_initial_rck_longranger_generic:
 		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
 		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
-		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
+		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output} &> {log}"
 
 
 rule get_short_initial_rck_svaba:
@@ -217,15 +225,17 @@ rule get_short_initial_rck_svaba:
 	input:  indel=os.path.join(rck_dir, "{base}_svaba_indel.rck.adj.tsv"),
 			sv=os.path.join(rck_dir, "{base}_svaba_sv.rck.adj.tsv")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: 	os.path.join(rck_dir, "log", "{base}_svaba.rck.adj.tsv.log")
 	params:
 		rck_adj_process=tools_methods["rck"]["rck_adj_process"]["path"],
 	shell:
-		"{params.rck_adj_process} cat {input.sv} {input.indel} -o {output}"
+		"{params.rck_adj_process} cat {input.sv} {input.indel} -o {output} &> {log}"
 
 rule get_short_initial_svaba_generic:
 	output: os.path.join(rck_dir, "{base}_svaba_{itype,(sv|indel)}.rck.adj.tsv")
 	input:  os.path.join(raw_sv_calls_dir, "{base}_{itype}_svaba.vcf") 
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: 	os.path.join(rck_dir, "log", "{base}_svaba_{itype,(sv|indel)}.rck.adj.tsv.log")
 	params:
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		suffix=lambda wc: wc.base + "_svaba_" + wc.itype,
@@ -235,13 +245,14 @@ rule get_short_initial_svaba_generic:
 		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
 		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
-		"{params.rck_adj_x2rck} svaba {input} --i-type {params.itype} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
+		"{params.rck_adj_x2rck} svaba {input} --i-type {params.itype} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output} &> {log}"
 
 
 rule get_short_initial_rck_generic:
 	output: os.path.join(rck_dir, "{base}_{method," + short_methods_regex +"}.rck.adj.tsv")
-	input: os.path.join(raw_sv_calls_dir, "{base}_{method}.vcf")
-	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	input: 	os.path.join(raw_sv_calls_dir, "{base}_{method}.vcf")
+	conda: 	os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: 	os.path.join(rck_dir, "log", "{base}_{method," + short_methods_regex +"}.rck.adj.tsv.log")
 	params:
 		method=lambda wc: wc.method,
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
@@ -252,7 +263,7 @@ rule get_short_initial_rck_generic:
 		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 		sample_string=lambda wc: "--samples Tumor" if wc.method == "grocsvs" else ""
 	shell:
-		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
+		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output} &> {log}"
 
 ruleorder: get_short_initial_rck_longranger_generic > get_short_initial_svaba_generic > get_short_initial_rck_generic
 
