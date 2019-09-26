@@ -54,6 +54,8 @@ Clone this repository into the **assests** location (i.e., place, where the **re
 ````
 git clone https://github.com/aganezov/EnsembleSV.git
 ```` 
+The environment from which the *EnsembleSV* is executed is required to have Python3 and SnakeMake installed in it. 
+You ca create a suitable cond environment by running `conda env create -f EnsembleSV/conda/ensemblesv.yaml` and then run `conda activate EnsembleSV` to activate it, respectively.   
 
 Usage
 =
@@ -94,7 +96,7 @@ snakemake -s call_svs_*method*.snakefile
 For every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.  
 
 *Note (i)*: currently **conda environments** withing snakemake setup of EnsembleSV only work during the SV calling and not yet during merging. 
-So, if you don't have all of the SV calling tools installed in you environment, you can still run `call_svs.snakefile` pipeline with `--use-conda` flag (allowing for automatic download and setup all the SV inference methods,
+So, if you don't have all of the SV calling tools installed in you environment (and most likely you do not, as often, different tools have conflicting dependencies requirements), you can still run `call_svs.snakefile` pipeline with `--use-conda` flag (allowing for automatic download and setup all the SV inference methods,
  except for GROCSVs, NAIBR, and LongRanger; i.e., linked reads case), but `merge_svs.snakefile` pipeline shall not yet be ran with `--use-conda` (ensure that you have RCK and SURVIVOR in your environment prior to running the SV merging pipeline).   
 
 *Note (ii)*: LongRanger SV inference is not run during the `call_svs.snakefile` pipeline, but respective variant calls only taken into account during the merging process. 

@@ -1,0 +1,10 @@
+name: EnsembleSV
+channels:
+  - gurobi
+  - bioconda
+  - conda-forge
+  - defaults
+  - r
+  - http://conda.anaconda.org/gurobi
+dependencies:
+  - snakemake
