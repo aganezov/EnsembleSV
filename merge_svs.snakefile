@@ -54,7 +54,7 @@ def call_set_files():
 	present = False
 	if len(merge_input_rck_files()) > 0:
 		present = True
-	if len(long_methods) > 0 and len(config["data_input"]["bams"]["long"]) > 0:
+	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
 		present = True
 	if present:
 		result = [os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.rck.vcf"),
