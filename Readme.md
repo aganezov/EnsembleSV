@@ -67,10 +67,12 @@ Then:
 cd path
 mkdir sv && cd sv
 ln -s soft/EnsembleSV/*.snakefile .
+ls -s soft/EnsembleSV/*.txt
 ln -s soft/EnsembleSV/conda
 ln -s soft/EnsembleSV/scripts
 cp soft/EnsembleSV/data.yaml .
 cp soft/EnsembleSV/sv_tools.yaml .
+
 ````
 
 Now update the copied `data.yaml` and `sv_tools.yaml` files with the experiment-specific information. 
