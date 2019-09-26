@@ -13,7 +13,7 @@ long_methods = [method for method in config["tools_enabled_methods"] if method i
 short_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["illumina"] + config["tools_read_type_to_method"]["linked"]]
 
 long_read_bams = config["data_input"]["bams"]["long"] if "long" in config["data_input"]["bams"] else []
-long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams] if len(long_methods) > 0 and len(config["data_input"]["bams"]["long"]) > 0 else []
+long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams] if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0 else []
 
 def merge_input_rck_vcf_files():
 	result = []
