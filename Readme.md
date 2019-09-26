@@ -77,15 +77,15 @@ Now update the copied `data.yaml` and `sv_tools.yaml` files with the experiment-
 On detailed instruction for updating `data.yaml` file, please, refer to respective data [docs](./docs/data.md).
 On detailed instruction for updating `sv_tools.yaml` file, please, refer to respective tools [docs](./docs/sv_tools.md).
 
-Running *EnsembleSV* can be accomplished via *snakemake* simple command:
+Running *EnsembleSV* can be accomplished via *snakemake* simple command (not production ready yet, please, resort for SV calling and Merging pipelines being run separately):
 ````
 snakemake -s merge_svs.snakefile
 ````
 
 If you want to separate method-specific SV calling and subsequent merging, you can do so as follows:
 ````
-snakemake -s call_svs.snakefile
-snakemake -s merge_svs.snakefile
+snakemake -s call_svs.snakefile --use-conda
+snakemake -s merge_svs.snakefile --use-conda 
 ```` 
 
 Running method-specific SV calling can be achieved via:
@@ -93,7 +93,16 @@ Running method-specific SV calling can be achieved via:
 snakemake -s call_svs_*method*.snakefile
 ````
 
-For every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.  
+For every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.
+
+Useful Snakemake flags:
+* `--cores [INT]` allows for multithreading, which is usefull in SV inference for a lot of methods. By default all methods will be ran in a consecutive single-threaded mode;
+* `--latency-wait [SECONDS]` allows for IO latency, especially beneficial, when running on a cluster where IO/partitions may cause file locating issues;
+* `--cluster [CMD]` ensures that every rule is submitted as a separate cluster job with the `CMD` command;
+* `--local-cores [INT]` when in cluster mode this restricts the amount of threads/cores to be used on a given cluster submission;
+* `--keep-going` proceed with independent jobs even if some jobs fail. Useful when a lot of SV calling/merging is done, ensuring that single method issues would not drastically increase time of data anlaysis;
+* `-p` prints the shell commands being exectued. Useful for debugging/monitoring purposes;
+* `-r` print the reason for an executed rule;
 
 *Note (i)*: currently **conda environments** withing snakemake setup of EnsembleSV only work during the SV calling and not yet during merging. 
 So, if you don't have all of the SV calling tools installed in you environment (and most likely you do not, as often, different tools have conflicting dependencies requirements), you can still run `call_svs.snakefile` pipeline with `--use-conda` flag (allowing for automatic download and setup all the SV inference methods,
