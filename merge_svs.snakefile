@@ -19,7 +19,7 @@ def merge_input_rck_vcf_files():
 	result = []
 	if len(short_methods) > 0 and (("illumina" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["illumina"]) > 0) or ("linked" in config["data_input"]["bams"] and  len(config["data_input"]["bams"]["linked"]) > 0)):
 		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + "_short.sens.rck.vcf"))
-	if len(long_methods) > 0 and len(config["data_input"]["bams"]["long"]) > 0:
+	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
 		long_read_bams = config["data_input"]["bams"]["long"]
 		long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 		for base in long_read_bases:
