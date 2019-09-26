@@ -10,7 +10,7 @@ rck_dir = os.path.join(merged_dir, "rck")
 aggreagate_merged_dir = os.path.join(merged_dir, "merged")
 raw_sv_calls_dir = os.path.join(config["data_output"]["raw_sv_calls"]["dir"], "raw")
 long_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["long"]]
-long_read_bams = config["data_input"]["bams"]["long"]
+long_read_bams = config["data_input"]["bams"].get("long", [])
 long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 long_methods_regex = "(" + "|".join(long_methods) + ")"
 long_bases_regex = "(" + "|".join(long_read_bases) + ")"
@@ -18,14 +18,14 @@ long_bases_regex = "(" + "|".join(long_read_bases) + ")"
 # print([os.path.join(rck_dir, "{base}_" + method + ".sens.rck.adj.tsv") for method in long_methods])
 def expected_long_spes():
 	# print("test")
-	long_read_bams = config["data_input"]["bams"]["long"]
+	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	result = [os.path.join(aggreagate_merged_dir, base + ".spes.rck.vcf") for base in long_read_bases]	
 	# print(result)
 	return result
 
 def expected_long_sens():
-	long_read_bams = config["data_input"]["bams"]["long"]
+	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	result = [os.path.join(aggreagate_merged_dir, base + ".sens.rck.vcf") for base in long_read_bases]	
 	return result
