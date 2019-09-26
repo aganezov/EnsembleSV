@@ -34,10 +34,10 @@ rule copy_manta_vcf_to_aggregate_dir:
 		"cp {input} {output}"
 
 rule run_manta_surface_result:
-	input: lambda wc: os.path.join(manta_output_dir, "{base}_rundir", "results", "variants", "tumorSV.vcf.gz" if config["data_sample_type"] == "T" else "diploidSV.vcf.gz")
-	output: os.path.join(manta_output_dir, "{base}" + "_manta.vcf")
+	input: lambda wc: os.path.join(manta_output_dir, wc.base + "_rundir", "results", "variants", "tumorSV.vcf.gz" if config["data_sample_type"] == "T" else "diploidSV.vcf.gz")
+	output: os.path.join(manta_output_dir, "{base}_manta.vcf")
 	params:
-		vcf_file = os.path.join(manta_output_dir, "{base}_rundir", "results", "variants", "tumorSV.vcf.gz" if config["data_sample_type"] == "T" else "diploidSV.vcf.gz")
+		vcf_file = lambda wc: os.path.join(manta_output_dir, wc.base +"_rundir", "results", "variants", "tumorSV.vcf.gz" if config["data_sample_type"] == "T" else "diploidSV.vcf.gz")
 	shell:
 		"gunzip -c {params.vcf_file} > {output}"
 
@@ -46,7 +46,7 @@ rule run_manta_workflow_normal:
 		run_scipt=os.path.join(manta_output_dir, "{base}_rundir", "runWorkflow.py"),
 	output: os.path.join(manta_output_dir, "{base}_rundir", "results", "variants", "diploidSV.vcf.gz")
 	message: "running manta workflow for {input}"
-	threads: 16
+	threads: config["tools_methods"]["manta"].get("threads", 15)
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["manta"]["conda"])
 	log: os.path.join(manta_output_dir, "{base}_rundir", "log", "diploidSV.vcf.gz.log")
 	params:
@@ -59,7 +59,7 @@ rule run_manta_workflow_tumor:
 		run_scipt=os.path.join(manta_output_dir, "{base}_rundir", "runWorkflow.py"),
 	output: os.path.join(manta_output_dir, "{base}_rundir", "results", "variants", "tumorSV.vcf.gz")
 	message: "running manta workflow for {input}"
-	threads: 16
+	threads: config["tools_methods"]["manta"].get("threads", 15)
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["manta"]["conda"])
 	log: os.path.join(manta_output_dir, "{base}_rundir", "log", "tumorSV.vcf.gz.log")
 	params:

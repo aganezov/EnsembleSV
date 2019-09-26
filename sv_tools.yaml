@@ -22,7 +22,7 @@ tools_read_type_to_method:
     - "pbsv"
     - "sniffles"
 
-tools_methods_conda_dir: "sv/conda" # FIX with full path if ran from outside the master dir
+tools_methods_conda_dir: "conda" # FIX with full path if ran from outside the master dir
 
 
 tools_methods:
@@ -56,6 +56,7 @@ tools_methods:
   manta:
     config_script: configManta.py
     mode: local
+    threads: 15
     conda: "manta.yaml"
   grocsvs:
     path: "/path/to//grocsvs" # FIX with real path. NOT RELATED TO CONDA, MUST BE INSTALLED SEPARATELY
