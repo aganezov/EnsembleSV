@@ -50,11 +50,11 @@ data_merge_sens:
   min_support_fraction:
     long: 0.25
   # chr_include:
-      # file: "/path/to/rck/utils/adj/main_chrs.txt" # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
+      # file: "main_chrs.txt"                        # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
       # regions:
       # - "X"                                        # Example. Fix with your own region CHR[:start-end] pattern
   # chr_exclude:
-    # file: "/path/to/chr_list.txt"                  # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
+    # file: "main_chrs.txt"                          # Example. Fix with your own file. Refer to RCK docs for more details on RCK-ADJ-PROCESS filter utility
     # regions:
     #  - "Y"                                         # Example. Fix with your own region CHR[:start-end] pattern
   survivor:

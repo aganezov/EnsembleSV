@@ -118,10 +118,10 @@ rule get_short_sens_rck:
 		samples=lambda wc: ",".join(survivor_samples()),
 		samples_source=lambda wc: ",".join(short_rck()),
 		suffix=config["data_sample_name"] + "_short_sens",
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
 		"{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} --samples-suffix-extra --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
 
@@ -178,10 +178,10 @@ rule get_short_initial_naibr:
 		method="naibr",
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		suffix=lambda wc: wc.base + "_naibr",
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
 		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
 
@@ -204,10 +204,10 @@ rule get_short_initial_rck_longranger_generic:
 		method="longranger",
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		suffix=lambda wc: wc.base + "_longranger_" + wc.sv_type,
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
 		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
 
@@ -230,10 +230,10 @@ rule get_short_initial_svaba_generic:
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		suffix=lambda wc: wc.base + "_svaba_" + wc.itype,
 		itype=lambda wc: wc.itype,
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
 		"{params.rck_adj_x2rck} svaba {input} --i-type {params.itype} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"
 
@@ -246,10 +246,10 @@ rule get_short_initial_rck_generic:
 		method=lambda wc: wc.method,
 		rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
 		suffix=lambda wc: wc.base + "_" + wc.method,
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 		sample_string=lambda wc: "--samples Tumor" if wc.method == "grocsvs" else ""
 	shell:
 		"{params.rck_adj_x2rck} {params.method} {input} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file} -o {output}"

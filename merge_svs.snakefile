@@ -179,10 +179,10 @@ rule get_merged_sens_call_set_rck:
 		samples=lambda wc: ",".join(samples()),
 		samples_source=lambda wc: ",".join(merge_input_rck_files()),
 		suffix=lambda wc: config["data_sample_name"] + "_sens",
-		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_spec"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_include"]) else "",
-		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_spec"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_spec"] and "regions" in config["data_merge_spec"]["chr_exclude"]) else "",
-		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_spec"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_spec"] and "file" in config["data_merge_spec"]["chr_exclude"]) else "",
+		chr_include=lambda wc: ("--chrs-include " + ",".join(config["data_merge_sens"]["chr_include"]["regions"])) if ("chr_include" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_include_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_include"]["file"]) if ("chr_include" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_include"]) else "",
+		chr_exclude=lambda wc: ("--chrs-exclude " + ",".join(config["data_merge_sens"]["chr_exclude"]["regions"])) if ("chr_exclude" in config["data_merge_sens"] and "regions" in config["data_merge_sens"]["chr_exclude"]) else "",
+		chr_exclude_file=lambda wc: ("--chrs-include-file " + config["data_merge_sens"]["chr_exclude"]["file"]) if ("chr_exclude" in config["data_merge_sens"] and "file" in config["data_merge_sens"]["chr_exclude"]) else "",
 	shell:
 		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file}  --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output}"
 
