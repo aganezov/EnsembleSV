@@ -48,8 +48,8 @@ rule run_svaba_workflow:
 	output: indel=os.path.join(svaba_output_dir, "{base}_svaba.svaba.indel.vcf"),
 			sv=os.path.join(svaba_output_dir, "{base}_svaba.svaba.sv.vcf"),
 	message: "running svaba for {input}"
-	threads: tools_methods["svaba"].get("threads", 16)
-	# conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["svaba"]["conda"])
+	threads: tools_methods["svaba"].get("threads", 15)
+	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["svaba"]["conda"])
 	log: os.path.join(svaba_output_dir, "log", "{base}_svaba.svaba.indel_sv.vcf.log")
 	params:
 		svaba=tools_methods["svaba"].get("path", "svaba"),
