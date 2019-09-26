@@ -68,7 +68,7 @@ rule prepare_lumpy_split_alignment:
 	log: os.path.join(lumpy_output_dir, "log", "{base}" + ".splitters.unsorted.bam.log")
 	params: 
 		samtools=tools_methods["lumpy"].get("samtools", {}).get("path", "samtools"),
-		script=tools_methods["lumpy"].get("extract_script", )
+		script=tools_methods["lumpy"].get("extract_script", "extractSplitReads_BwaMem")
 	shell:
 		"{params.samtools} view -h {input} | {params.script} -i stdin | {params.samtools} view -o {output} -Sb - &> {log}"
 

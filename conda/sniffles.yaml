@@ -6,11 +6,4 @@ channels:
   - r
   - http://conda.anaconda.org/gurobi
 dependencies:
-  - bamtools=2.4.1=1
-  - libgcc=7.2.0=h69d50b8_2
-  - libgcc-ng=7.3.0=hdf63c60_0
-  - libstdcxx-ng=7.3.0=hdf63c60_0
-  - sniffles=1.0.11=h4f6fcad_0
-  - tclap=1.2.1=h470a237_1
-  - zlib=1.2.11=h14c3975_1004
-prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/sniffles
+  - sniffles

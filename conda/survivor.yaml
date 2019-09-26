@@ -6,8 +6,5 @@ channels:
   - r
   - http://conda.anaconda.org/gurobi
 dependencies:
-  - libgcc-ng=8.2.0=hdf63c60_1
-  - libstdcxx-ng=8.2.0=hdf63c60_1
-  - survivor=1.0.6=h6bb024c_0
-prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/survivor
+  - survivor
 

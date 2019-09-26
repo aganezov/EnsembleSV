@@ -5,5 +5,5 @@ channels:
   - defaults
   - r
   - http://conda.anaconda.org/gurobi
-prefix: /scratch/groups/mschatz1/aganezov/miniconda3/envs/svaba
-
+dependencies:
+  - svaba

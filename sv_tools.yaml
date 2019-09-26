@@ -26,9 +26,6 @@ tools_methods_conda_dir: "sv/conda" # FIX with full path if ran from outside the
 
 
 tools_methods:
-  samtools:
-    path: "samtools"
-    conda: "samtools.yaml"
   sniffles:
     path: "sniffles"
     threads: 15
