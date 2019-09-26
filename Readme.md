@@ -105,6 +105,7 @@ Useful Snakemake flags:
 * `--keep-going` proceed with independent jobs even if some jobs fail. Useful when a lot of SV calling/merging is done, ensuring that single method issues would not drastically increase time of data anlaysis;
 * `-p` prints the shell commands being exectued. Useful for debugging/monitoring purposes;
 * `-r` print the reason for an executed rule;
+* `-n` dry run, see the commands being executed without actually running them (*HIGHLY RECOMMENDED* to always first run with `-n`)
 
 *Note (i)*: currently **conda environments** withing snakemake setup of EnsembleSV only work during the SV calling and not yet during merging. 
 So, if you don't have all of the SV calling tools installed in you environment (and most likely you do not, as often, different tools have conflicting dependencies requirements), you can still run `call_svs.snakefile` pipeline with `--use-conda` flag (allowing for automatic download and setup all the SV inference methods,
