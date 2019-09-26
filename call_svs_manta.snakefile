@@ -48,6 +48,7 @@ rule run_manta_workflow_normal:
 	message: "running manta workflow for {input}"
 	threads: 16
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["manta"]["conda"])
+	log: os.path.join(manta_output_dir, "{base}_rundir", "log", "diploidSV.vcf.gz.log")
 	params:
 		mode=tools_methods["manta"].get("mode", "local")
 	shell:
@@ -60,10 +61,11 @@ rule run_manta_workflow_tumor:
 	message: "running manta workflow for {input}"
 	threads: 16
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["manta"]["conda"])
+	log: os.path.join(manta_output_dir, "{base}_rundir", "log", "tumorSV.vcf.gz.log")
 	params:
 		mode=tools_methods["manta"].get("mode", "local")
 	shell:
-		"{input.run_scipt} -j {threads} -m {params.mode}"
+		"{input.run_scipt} -j {threads} -m {params.mode} &> {log}"
 
 
 rule configure_manta:
@@ -73,9 +75,10 @@ rule configure_manta:
 	output: os.path.join(manta_output_dir, "{base}_rundir", "runWorkflow.py")
 	message: "running manta configuration for {input}"
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["manta"]["conda"])
+	log: os.path.join(manta_output_dir, "{base}_rundir", "log", "runWorkflow.py.log")
 	params:
 		config_script=tools_methods["manta"].get("config_script", "configManta.py"),
 		bam_flag=lambda wc: "--tumorBam" if config["data_sample_type"] == "T" else "--bam",
 		prefix=lambda wc: os.path.join(manta_output_dir, wc.base)
 	shell:
-		"{params.config_script} {params.bam_flag} {input.bam} --referenceFasta {input.ref} --runDir {params.prefix}_rundir"
+		"{params.config_script} {params.bam_flag} {input.bam} --referenceFasta {input.ref} --runDir {params.prefix}_rundir &> {log}"

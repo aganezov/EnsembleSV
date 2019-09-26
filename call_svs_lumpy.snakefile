@@ -40,10 +40,11 @@ rule run_lumpy_call:
 	output: os.path.join(lumpy_output_dir, "{base}" + "_lumpy.vcf")
 	message: "running lumpy on bam {input.bam} ;splitters {input.splitters} discordants {input.discordants}; result calls in {output}"
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["lumpy"]["conda"])
+	log: os.path.join(lumpy_output_dir, "log", "{base}" + "_lumpy.vcf.log")
 	params:
 		lumpy=tools_methods["lumpy"].get("path", "lumpyexpress")
 	shell: 
-		"{params.lumpy} -B {input.bam} -S {input.splitters} -D {input.discordants} -o {output}"
+		"{params.lumpy} -B {input.bam} -S {input.splitters} -D {input.discordants} -o {output} &> {log}"
 
 
 rule prepare_lumpy_discordant_alignment:
@@ -52,10 +53,11 @@ rule prepare_lumpy_discordant_alignment:
 	message: "preparing discordant read alignments for lumpy from {input}"
 	threads: 16
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["lumpy"]["conda"])
+	log: os.path.join(lumpy_output_dir, "log", "{base}" + ".discordants.unsorted.bam.log")
 	params: 
 		samtools=tools_methods["lumpy"].get("samtools", "").get("path", "samtools")
 	shell:
-		"{params.samtools} view -@ {threads} -b -F 1294 -o {output} {input}"
+		"{params.samtools} view -@ {threads} -b -F 1294 -o {output} {input} &> {log}"
 
 
 rule prepare_lumpy_split_alignment:
@@ -63,11 +65,12 @@ rule prepare_lumpy_split_alignment:
 	output: os.path.join(lumpy_output_dir, "{base}" + ".splitters.unsorted.bam")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["lumpy"]["conda"])
 	message: "extracting split reads from {input} to {output}"
+	log: os.path.join(lumpy_output_dir, "log", "{base}" + ".splitters.unsorted.bam.log")
 	params: 
 		samtools=tools_methods["lumpy"].get("samtools", {}).get("path", "samtools"),
 		script=tools_methods["lumpy"].get("extract_script", )
 	shell:
-		"{params.samtools} view -h {input} | {params.script} -i stdin | {params.samtools} view -o {output} -Sb -"
+		"{params.samtools} view -h {input} | {params.script} -i stdin | {params.samtools} view -o {output} -Sb - &> {log}"
 
 rule prepare_lumpy_sort_alignments:
 	input: os.path.join(lumpy_output_dir, "{base}" + ".{type}.unsorted.bam")
@@ -75,8 +78,9 @@ rule prepare_lumpy_sort_alignments:
 	message: "sorting lumpy alignment {input}"
 	threads: 16
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["lumpy"]["conda"])
+	log: os.path.join(lumpy_output_dir, "log", "{base}" + ".{type}.sort.bam.log")
 	params:
 		samtools=tools_methods["lumpy"].get("samtools", {}).get("path", "samtools")
 	shell:
-		"{params.samtools} sort -@ {threads} -o {output} {input}"
+		"{params.samtools} sort -@ {threads} -o {output} {input} &> {log}"
 

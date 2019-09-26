@@ -50,9 +50,10 @@ rule run_svaba_workflow:
 	message: "running svaba for {input}"
 	threads: tools_methods["svaba"].get("threads", 16)
 	# conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["svaba"]["conda"])
+	log: os.path.join(svaba_output_dir, "log", "{base}_svaba.svaba.indel_sv.vcf.log")
 	params:
 		svaba=tools_methods["svaba"].get("path", "svaba"),
 		name=lambda wc: wc.base + "_svaba",
 		svaba_output_dir=svaba_output_dir
 	shell:
-		"cd {params.svaba_output_dir} && {params.svaba} run -t {input.bam} -G {input.ref} -p {threads} -a {params.name} --germline"
+		"cd {params.svaba_output_dir} && {params.svaba} run -t {input.bam} -G {input.ref} -p {threads} -a {params.name} --germline &> {log}"

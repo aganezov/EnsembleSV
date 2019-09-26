@@ -46,10 +46,11 @@ rule run_grocsvs_workflow:
 	output: os.path.join(grocsvs_output_dir, "{base}", "results", "PostprocessingStep", "svs.vcf")
 	message: "executing grocsvs pipeline with {input} config"
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["grocsvs"]["conda"])
+	log: os.path.join(grocsvs_output_dir, "{base}", "log", "svs.vcf.log")
 	params:
 		grocsvs=tools_methods["grocsvs"].get("path", "grocsvs")
 	shell:
-		"{params.grocsvs} {input}"
+		"{params.grocsvs} {input} &> {log}"
 
 rule prepare_grocsvs_config_file:
 	input: 

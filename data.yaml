@@ -73,14 +73,5 @@ data_merge_spec:
   survivor:
       max_distance: 1000
 
-
-log_output:
-  sniffles:
-    dir: "sniffles/log"
-  pbsv:
-    dir: "psbv/log"
-  lumpy:
-    dir: "lumpy/log"
-
 data_sample_type: "FILL with SAMPLE_TYPE (T or N)"
 data_sample_name: "FILL with SAMPLE NAME"

@@ -40,20 +40,22 @@ rule run_pbsv_call:
 		   signatures=os.path.join(pbsv_output_dir, "{base}_pbsv.svsig.gz")
 	output: os.path.join(pbsv_output_dir, "{base}_pbsv.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["pbsv"]["conda"])
+	log: os.path.join(pbsv_output_dir, "log", "{base}_pbsv.vcf.log")
 	params: 
 		pbsv=tools_methods["pbsv"].get("path", "pbsv"),
 	message: "running pbsv call on {input.signatures} with ref {input.ref}"
 	shell:
-		"{params.pbsv} call {input.ref} {input.signatures} {output}"
+		"{params.pbsv} call {input.ref} {input.signatures} {output} &> {log}"
 
 
 rule run_pbsv_discover:
 	input: lambda wc: pbsv_base_to_bam_file_path()[wc.base]
 	output: os.path.join(pbsv_output_dir, "{base}_pbsv.svsig.gz")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["pbsv"]["conda"])
+	log: os.path.join(pbsv_output_dir, "log", "{base}_pbsv.svsig.gz.log")
 	params:
 		pbsv=tools_methods["pbsv"].get("path", "pbsv"),
 		base=lambda wc: wc.base
 	message: "running pbsv discover with "
 	shell:
-		"{params.pbsv} discover --sample {params.base} {input} {output}"
+		"{params.pbsv} discover --sample {params.base} {input} {output} &> {log}"
