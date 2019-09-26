@@ -91,7 +91,15 @@ Running method-specific SV calling can be achieved via:
 snakemake -s call_svs_*method*.snakefile
 ````
 
-Note that for every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.  
+For every data type (short Illumina, linked, and long reads) only SV inference methods specified in the `tools_enabled_methods` section in the `sv_tools.yaml` file.  
+
+*Note (i)*: currently **conda environments** withing snakemake setup of EnsembleSV only work during the SV calling and not yet during merging. 
+So, if you don't have all of the SV calling tools installed in you environment, you can still run `call_svs.snakefile` pipeline with `--use-conda` flag (allowing for automatic download and setup all the SV inference methods,
+ except for GROCSVs, NAIBR, and LongRanger; i.e., linked reads case), but `merge_svs.snakefile` pipeline shall not yet be ran with `--use-conda` (ensure that you have RCK and SURVIVOR in your environment prior to running the SV merging pipeline).   
+
+*Note (ii)*: LongRanger SV inference is not run during the `call_svs.snakefile` pipeline, but respective variant calls only taken into account during the merging process. 
+Reason being that linked reads alignments are usually produced by LongRanger pipeline alongside with the respective VCF SVs calls. 
+Simply placing SV VCFs into respective folders will allow EnsembleSV to integrate them during the merging pipeline. 
 
 Contribution
 =
