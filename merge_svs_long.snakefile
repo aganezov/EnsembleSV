@@ -30,6 +30,13 @@ def expected_long_sens():
 	result = [os.path.join(aggreagate_merged_dir, base + ".sens.rck.vcf") for base in long_read_bases]	
 	return result
 
+def expected_long_stats():
+	long_read_bams = config["data_input"]["bams"].get("long", [])
+	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
+	result = [os.path.join(rck_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
+	result.extend([os.path.join(rck_dir, base + ".spes.methods_stats.txt") for base in long_read_bases])
+	return result
+
 def greater_even_regex_for_number(number):
 	if number < 10:
 		result = "^([{a}-9]|".format(a=number) + "\\d{2}|\\d{3}|\\d{4})$"
@@ -56,6 +63,7 @@ def regex_extra_re_string(method_specific_re_names, regex):
 
 rule all:
 	input: expected_long_spes(),
+		   expected_long_stats(),
 		   expected_long_sens()
 
 
