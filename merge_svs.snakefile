@@ -41,6 +41,7 @@ def stats_files():
 	result = []
 	if len(merge_input_rck_files()) > 0:
 		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.main_stats.txt"))
+		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.svtype_stats.txt"))
 	if len(short_methods) > 0 and (("illumina" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["illumina"]) > 0) or ("linked" in config["data_input"]["bams"] and  len(config["data_input"]["bams"]["linked"]) > 0)):
 		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.short_stats.txt"))
 	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
@@ -124,6 +125,16 @@ rule get_filtered_rck_vcf:
 		dummy_clone=config["data_sample_name"] + "_call_set",
 	shell:
 		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
+
+rule get_filtered_call_set_svtype_stats:
+	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
+	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.svtype_stats.txt")
+	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log:	os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.svtype_stats.txt.log")
+	params:
+		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"]
+	shell:
+		"{params.rck_adj_stats} survivor-stat {input} --sources-field svtype -o {output} &> {log}"
 
 rule get_filtered_call_set_main_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")

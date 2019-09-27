@@ -60,7 +60,8 @@ rule all:
 
 
 rule get_long_spes:
-	input: os.path.join(rck_dir, "{base}.spes.rck.adj.tsv")
+	input: rck_adj=os.path.join(rck_dir, "{base}.spes.rck.adj.tsv"),
+		   spes_stats=os.path.join(rck_dir, "{base}.spes.rck.adj.stats.txt")
 	output: os.path.join(aggreagate_merged_dir, "{base," + long_bases_regex + "}.spes.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: os.path.join(aggreagate_merged_dir, "log", "{base," + long_bases_regex + "}.spes.rck.vcf")
@@ -68,8 +69,17 @@ rule get_long_spes:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_spes",
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input.rck_adj} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
 
+rule get_long_spes_stats:
+	input: os.path.join(rck_dir, "{base}.spes.rck.adj.tsv")
+	output: os.path.join(rck_dir, "{base}.spes.rck.adj.stats.txt")
+	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(rck_dir, "log", "{base}.spes.rck.adj.stats.txt.log")
+	params:
+		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
+	shell:
+		"{params.rck_adj_stats} survivor-stat {input} --sources-field svtype -o {output} &> {log}"
 
 rule get_long_spes_rck:
 	input: os.path.join(rck_dir, "{base}.sens.rck.adj.tsv")
