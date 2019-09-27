@@ -67,7 +67,7 @@ Then:
 cd path
 mkdir sv && cd sv
 ln -s soft/EnsembleSV/*.snakefile .
-ls -s soft/EnsembleSV/*.txt
+ls -s soft/EnsembleSV/*.txt .
 ln -s soft/EnsembleSV/conda
 ln -s soft/EnsembleSV/scripts
 cp soft/EnsembleSV/data.yaml .
