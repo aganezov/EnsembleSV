@@ -70,7 +70,7 @@ rule all:
 rule get_long_spes:
 	input: rck_adj=os.path.join(rck_dir, "{base}.spes.rck.adj.tsv"),
 		   spes_svtype_stats=os.path.join(rck_dir, "{base}.spes.svtype_stats.txt"),
-		   spes_methods_stats=os.path.join(rck_dir, "{base}.spes.methods_stats.txt}")
+		   spes_methods_stats=os.path.join(rck_dir, "{base}.spes.methods_stats.txt")
 	output: os.path.join(aggreagate_merged_dir, "{base," + long_bases_regex + "}.spes.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: os.path.join(aggreagate_merged_dir, "log", "{base," + long_bases_regex + "}.spes.rck.vcf")
