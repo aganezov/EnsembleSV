@@ -187,7 +187,8 @@ rule get_filtered_call_set_long_stats:
 
 rule get_filtered_call_set:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	input:  os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
+	input:  rck_adj=os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv"),
+		    vcf=os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".sens.rck.vcf"),
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: 	os.path.join(rck_dir, "log", config["data_sample_name"] + ".spes.rck.adj.tsv.log")
 	params:
@@ -197,8 +198,18 @@ rule get_filtered_call_set:
 						   for base in long_read_bases) + " --keep-extra-field-regex \"" + config["data_sample_name"].lower() + "_sens_supporting_sources=" + config["data_sample_name"] + "_short_sens\"",
 		min_size=config["data_merge_spec"]["min_len"]
 	shell:
-		"{params.rck_adj_process} filter {input} {params.re_regexes} --min-size {params.min_size} --size-extra-field svlen -o {output} &> {log}"
+		"{params.rck_adj_process} filter {input.rck_adj} {params.re_regexes} --min-size {params.min_size} --size-extra-field svlen -o {output} &> {log}"
 
+rule get_merged_sens_vcf:
+	input: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
+	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".sens.rck.vcf")
+	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+	log: os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".sens.rck.vcf")
+	params:
+		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
+		dummy_clone=config["data_sample_name"] + "sens_call_set",
+	shell:
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
 
 rule get_merged_sens_call_set_rck:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
