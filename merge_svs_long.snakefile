@@ -79,7 +79,7 @@ rule get_long_spes_methods_stats:
 	log: os.path.join(rck_dir, "log", "{base}.spes.rck.adj.methods_stats.txt.log")
 	params:
 		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
-		sources_field=lambda wc: (wc.base + "_sens_supporting_sources").lower(),,
+		sources_field=lambda wc: (wc.base + "_sens_supporting_sources").lower(),
 	shell:
 		"{params.rck_adj_stats} survivor-stat {input} --sources-field {params.sources_field} -o {output} &> {log}"
 
