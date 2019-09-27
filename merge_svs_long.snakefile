@@ -80,7 +80,7 @@ rule get_long_spes:
 
 rule get_long_spes_methods_stats:
 	input: os.path.join(rck_dir, "{base}.spes.rck.adj.tsv")
-	output: os.path.join(rck_dir, "{base}.spes.methods_stats.txt}")
+	output: os.path.join(rck_dir, "{base}.spes.methods_stats.txt")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: os.path.join(rck_dir, "log", "{base}.spes.rck.adj.methods_stats.txt.log")
 	params:
