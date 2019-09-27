@@ -121,7 +121,7 @@ def expected_long_spes():
 def expected_long_stats():
 	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
-	result = [os.path.join(rck_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
+	result = [os.path.join(aggreagate_merged_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
 	return result
 
 
