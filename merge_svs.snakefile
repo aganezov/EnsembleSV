@@ -110,10 +110,26 @@ def sample_sources():
 		result += [short_sample_sources()]
 	return result + long_sample_sources
 
+def expected_long_spes():
+	# print("test")
+	long_read_bams = config["data_input"]["bams"].get("long", [])
+	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
+	result = [os.path.join(aggreagate_merged_dir, base + ".spes.rck.vcf") for base in long_read_bases]
+	# print(result)
+	return result
+
+def expected_long_stats():
+	long_read_bams = config["data_input"]["bams"].get("long", [])
+	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
+	result = [os.path.join(rck_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
+	return result
+
 
 rule get_merged_all:
 	input: stats_files(),
-		   call_set_files()
+		   call_set_files(),
+		   expected_long_stats(),
+		   expected_long_spes(),
 
 rule get_filtered_rck_vcf:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
