@@ -37,7 +37,7 @@ rule alignment_stats:
     log: os.path.join(reads_stats_output_dir, "log", "{base}.reads_stats.alignment.txt.log")
     params:
           median_flag=lambda wc: "--no-median" if not tools_methods["reads_stats"]["median"] else "",
-          N50_frag=lambda wc: "--no-N50" if not tools_methods["reads_stats"]["N50"] else "",
+          N50_flag=lambda wc: "--no-N50" if not tools_methods["reads_stats"]["N50"] else "",
           min_truncated_length=tools_methods["reads_stats"]["min_truncated_length"],
           max_truncated_length=tools_methods["reads_stats"]["max_truncated_length"],
           python=lambda wc: tools_methods["reads_stats"]["python"],
