@@ -104,5 +104,13 @@ tools_methods:
   survivor:
     conda: "survivor.yaml"
     path: "SURVIVOR"
+  reads_stats:
+    path: "scripts/read_lengths_stats.py" # FIX if not running from the master dir
+    conda: "reads_stats.yaml"
+    python: "python"
+    median: True
+    N50: True
+    min_truncated_length: 1500
+    max_truncated_length: 1000000000
 
 

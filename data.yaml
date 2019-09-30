@@ -14,6 +14,13 @@ data_input:
   index:
     ref: "FILL" # if short/linked read alignments are present. Index of the fasta::ref value
     long_ref: "FILL" # if long read alignments are present. Index of the fasta::ref value
+#  reads:      # Uncomment if want query reads lengths stats
+#    long:
+#      basename:  # "basename" must match the basename of the long read alignment
+#        - 1.fq   # list of PAcBio/ONT/etc fastq files with individual reads as entries
+#        - 2.fq
+#        - 3.fq
+
 
 data_output:
   sniffles:
@@ -39,6 +46,8 @@ data_output:
     dir: "longranger"
   svaba:
     dir: "svaba"
+  reads_stats:
+    dir: "reads_stats"
 
 
 data_merge_sens:
