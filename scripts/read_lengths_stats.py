@@ -67,6 +67,7 @@ def main():
                 com_sum += length
                 if com_sum >= total_truncated_length / 2:
                     print("N50 (truncated):", length, file=args.output)
+                    break
     elif args.command == "alignment":
         all_query_lengths = []
         all_alignment_lengths = []
@@ -123,7 +124,7 @@ def main():
                     com_sum += length
                     if com_sum >= total_length / 2:
                         print("N50 ({name}):".format(name=name), length, file=args.output)
-                    break
+                        break
 
 
 if __name__ == "__main__":
