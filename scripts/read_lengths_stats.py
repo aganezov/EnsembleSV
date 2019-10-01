@@ -89,6 +89,8 @@ def main():
                     query_length = entry.query_length
                     all_query_lengths.append(query_length)
                     alignment_length = entry.query_alignment_length
+                    if alignment_length == 0:
+                        continue
                     all_alignment_lengths.append(alignment_length)
                     query_length_bin = bins[bisect.bisect_right(bins, query_length)]
                     alignment_length_bin = bins[bisect.bisect_right(bins, alignment_length)]
