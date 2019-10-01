@@ -103,8 +103,8 @@ def main():
             print(file=args.output)
             print("median query length (all):", statistics.median(all_query_lengths), file=args.output)
             print("median query length (truncated):", statistics.median(truncated_query_lengths), file=args.output)
-            print("median query length (all):", statistics.median(all_alignment_lengths), file=args.output)
-            print("median query length (truncated):", statistics.median(truncated_alignment_lengths), file=args.output)
+            print("median alignment length (all):", statistics.median(all_alignment_lengths), file=args.output)
+            print("median alignment length (truncated):", statistics.median(truncated_alignment_lengths), file=args.output)
         if args.compute_N50:
             print(file=args.output)
             all_query_length = sum(all_query_lengths)
