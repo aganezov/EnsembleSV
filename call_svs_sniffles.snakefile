@@ -48,4 +48,4 @@ rule run_sniffles:
 	threads: config["tools_methods"]["sniffles"].get("threads", 15)
 	message: "running sniffles with {threads} threads on {input}"
 	shell:
-		"{params.sniffles} -m {input} -v {output} --threads {threads} --min_support {params.min_support} --max_distance {params.max_distance} --max_num_splits {params.max_num_splits} --min_length {params.min_length} --num_reads_report {params.num_reads_report} --min_seq_size {params.min_seq_size} --report_seq &> {log}"
+		"{params.sniffles} -m {input} -v {output} --threads {threads} --min_support {params.min_support} --max_distance {params.max_distance} --max_num_splits {params.max_num_splits} --min_length {params.min_length} --num_reads_report {params.num_reads_report} --min_seq_size {params.min_seq_size} --report_seq --genotype &> {log}"
