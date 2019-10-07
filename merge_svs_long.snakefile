@@ -74,8 +74,8 @@ rule all:
 
 rule get_long_sens_vcf_survivor:
 	input: rck_adj=os.path.join(rck_dir, "{base}.sens.rck.adj.tsv")
-	output: os.path.join(survivor_dir, "{base," + long_bases_regex + "}.spes.rck.vcf")
-	log: os.path.join(survivor_dir, "log", "{base," + long_bases_regex + "}.spes.rck.vcf")
+	output: os.path.join(survivor_dir, "{base," + long_bases_regex + "}.sens.rck.vcf")
+	log: os.path.join(survivor_dir, "log", "{base," + long_bases_regex + "}.sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
