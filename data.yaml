@@ -68,6 +68,8 @@ data_merge_sens:
     #  - "Y"                                         # Example. Fix with your own region CHR[:start-end] pattern
   survivor:
     max_distance: 1000
+    same_techbam_distance: 500
+    cross_techbam_distance: 1000
   min_cnt:
     short: 2
 
