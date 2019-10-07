@@ -24,6 +24,7 @@ def expected_long_spes():
 	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	result = [os.path.join(vcf_dir, base + ".spes.rck.vcf") for base in long_read_bases]
+	result.extend([os.path.join(rck_dir, base + ".spes.rck.adj.tsv") for base in long_read_bases])
 	# print(result)
 	return result
 
@@ -31,6 +32,7 @@ def expected_long_sens():
 	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 	result = [os.path.join(vcf_dir, base + ".sens.rck.vcf") for base in long_read_bases]
+	result.extend([os.path.join(rck_dir, base + ".sens.rck.adj.tsv") for base in long_read_bases])
 	return result
 
 def expected_long_stats():
