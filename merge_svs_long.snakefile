@@ -180,8 +180,8 @@ rule get_long_sens_vcf_for_survivor:
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_" + wc.method,
-		ref_extra=lambda wc: wc.base + "_" + wc.method + "_ref",
-		alt_extra=lambda wc: wc.base + "_" + wc.method + "_alt",
+		ref_extra="ref",
+		alt_extra="alt",
 	shell:
 		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
