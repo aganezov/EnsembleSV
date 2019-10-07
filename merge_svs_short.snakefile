@@ -6,7 +6,10 @@ import os
 tools_methods = config["tools_methods"]
 pre_merge_aggregate_dir = config["data_output"]["pre_merge_process"]["dir"]
 merged_dir = config["data_output"]["merge"]["dir"]
-rck_dir = os.path.join(merged_dir, "rck")
+rck_dir = os.path.join(merged_dir, config["data_output"]["rck"]["dir"])
+vcf_dir = os.path.join(merged_dir, config["data_output"]["vcf"]["dir"])
+stats_dir = os.path.join(merged_dir, config["data_output"]["stats"]["dir"])
+survivor_dir = os.path.join(merged_dir, config["data_output"]["survivor"]["dir"])
 aggreagate_merged_dir = os.path.join(merged_dir, "merged")
 raw_sv_calls_dir = os.path.join(config["data_output"]["raw_sv_calls"]["dir"], "raw")
 illumina_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["illumina"]]
@@ -56,7 +59,7 @@ def short_rck():
 			result.append(os.path.join(rck_dir, base + "_" + method + ".sens.rck.adj.tsv"))
 	return result
 
-def short_rck_vcf():
+def short_survivor_rck_vcf():
 	linked_read_bams = []
 	linked_read_bases = []
 	if "linked" in config["data_input"]["bams"]:
@@ -70,10 +73,10 @@ def short_rck_vcf():
 	result = []
 	for method in illumina_methods:
 		for base in illumina_read_bases:
-			result.append(os.path.join(rck_dir, base + "_" + method + ".sens.rck.vcf"))
+			result.append(os.path.join(survivor_dir, base + "_" + method + ".sens.rck.vcf"))
 	for method in linked_methods:
 		for base in linked_read_bases:
-			result.append(os.path.join(rck_dir, base + "_" + method + ".sens.rck.vcf"))
+			result.append(os.path.join(survivor_dir, base + "_" + method + ".sens.rck.vcf"))
 	return result
 
 def survivor_samples():
@@ -97,11 +100,12 @@ def survivor_samples():
 rule get_short_merged_all:
 	input: expected_short()
 
+
 rule get_short_sens_vcf:
 	input: os.path.join(rck_dir, config["data_sample_name"] + "_short.sens.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + "_short.sens.rck.vcf")
+	output: os.path.join(vcf_dir, config["data_sample_name"] + "_short.sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log: os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + "_short.sens.rck.vcf.log")
+	log: os.path.join(vcf_dir, "log", config["data_sample_name"] + "_short.sens.rck.vcf.log")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: config["data_sample_name"] + "_short_sens",
@@ -110,7 +114,7 @@ rule get_short_sens_vcf:
 
 
 rule get_short_sens_rck:
-	input: survivor=os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor.vcf"),
+	input: survivor=os.path.join(survivor_dir, config["data_sample_name"] + "_short.sens.survivor.vcf"),
 		   rck_files=short_rck(),
 	output: os.path.join(rck_dir, config["data_sample_name"] + "_short.sens.rck.adj.tsv")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
@@ -129,10 +133,10 @@ rule get_short_sens_rck:
 
 
 rule get_short_sens_survivor:
-	input: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor")
-	output: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor.vcf"),
+	input: os.path.join(survivor_dir, config["data_sample_name"] + "_short.sens.survivor")
+	output: os.path.join(survivor_dir, config["data_sample_name"] + "_short.sens.survivor.vcf"),
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["survivor"]["conda"])
-	log: os.path.join(merged_dir, "log", config["data_sample_name"] + "_short.sens.survivor.vcf.log"),
+	log: os.path.join(survivor_dir, "log", config["data_sample_name"] + "_short.sens.survivor.vcf.log"),
 	params:
 		survivor=tools_methods["survivor"]["path"],
 		max_distance=config["data_merge_sens"]["survivor"]["same_techbam_distance"],
@@ -145,8 +149,8 @@ rule get_short_sens_survivor:
 		"{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output} &> {log}"
 
 rule get_short_survivor_config:
-	output: os.path.join(merged_dir, config["data_sample_name"] + "_short.sens.survivor")
-	input: short_rck_vcf()
+	output: os.path.join(survivor_dir, config["data_sample_name"] + "_short.sens.survivor")
+	input: short_survivor_rck_vcf()
 	run:
 		with open(output[0], "wt") as dest:
 			for file_name in input:
@@ -154,9 +158,9 @@ rule get_short_survivor_config:
 
 rule get_short_sens_vcf_for_survivor:
 	input: os.path.join(rck_dir, "{base}_{method}.sens.rck.adj.tsv")
-	output: os.path.join(rck_dir, "{base}_{method," + short_methods_regex + "}.sens.rck.vcf")
+	output: os.path.join(survivor_dir, "{base}_{method," + short_methods_regex + "}.sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log: os.path.join(rck_dir, "log", "{base}_{method," + short_methods_regex + "}.sens.rck.vcf.log")
+	log: os.path.join(survivor_dir, "log", "{base}_{method," + short_methods_regex + "}.sens.rck.vcf.log")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_" + wc.method,

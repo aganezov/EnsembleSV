@@ -48,6 +48,14 @@ data_output:
     dir: "svaba"
   reads_stats:
     dir: "reads_stats"
+  survivor:
+    dir: "survivor"
+  vcf:
+    dir: "vcf"
+  rck:
+    dir: "rck"
+  stats:
+    dir: "stats"
 
 
 data_merge_sens:

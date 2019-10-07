@@ -6,7 +6,10 @@ import os
 tools_methods = config["tools_methods"]
 pre_merge_aggregate_dir = config["data_output"]["pre_merge_process"]["dir"]
 merged_dir = config["data_output"]["merge"]["dir"]
-rck_dir = os.path.join(merged_dir, "rck")
+rck_dir = os.path.join(merged_dir, config["data_output"]["rck"]["dir"])
+vcf_dir = os.path.join(merged_dir, config["data_output"]["vcf"]["dir"])
+stats_dir = os.path.join(merged_dir, config["data_output"]["stats"]["dir"])
+survivor_dir = os.path.join(merged_dir, config["data_output"]["survivor"]["dir"])
 aggreagate_merged_dir = os.path.join(merged_dir, "merged")
 raw_sv_calls_dir = os.path.join(config["data_output"]["raw_sv_calls"]["dir"], "raw")
 long_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["long"]]
@@ -32,15 +35,15 @@ def gt_dummy_extra_flag_entries():
 	return ",".join(result)
 
 
-def merge_input_rck_vcf_files():
+def merge_input_rck_survivor_vcf_files():
 	result = []
 	if len(short_methods) > 0 and (("illumina" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["illumina"]) > 0) or ("linked" in config["data_input"]["bams"] and  len(config["data_input"]["bams"]["linked"]) > 0)):
-		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + "_short.sens.rck.vcf"))
+		result.append(os.path.join(survivor_dir, config["data_sample_name"] + "_short.sens.rck.vcf"))
 	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
 		long_read_bams = config["data_input"]["bams"]["long"]
 		long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 		for base in long_read_bases:
-			result.append(os.path.join(aggreagate_merged_dir, base + ".sens.rck.vcf"))
+			result.append(os.path.join(survivor_dir, base + ".sens.rck.vcf"))
 	return result
 
 def merge_input_rck_files():
@@ -57,15 +60,15 @@ def merge_input_rck_files():
 def stats_files():
 	result = []
 	if len(merge_input_rck_files()) > 0:
-		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.main_stats.txt"))
-		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.svtype_stats.txt"))
+		result.append(os.path.join(stats_dir, config["data_sample_name"] + ".spes.main_stats.txt"))
+		result.append(os.path.join(stats_dir, config["data_sample_name"] + ".spes.svtype_stats.txt"))
 	if len(short_methods) > 0 and (("illumina" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["illumina"]) > 0) or ("linked" in config["data_input"]["bams"] and  len(config["data_input"]["bams"]["linked"]) > 0)):
-		result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.short_stats.txt"))
+		result.append(os.path.join(stats_dir, config["data_sample_name"] + ".spes.short_stats.txt"))
 	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
 		long_read_bams = config["data_input"]["bams"]["long"]
 		long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
 		for base in long_read_bases:
-			result.append(os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes." + base + "_stats.txt"))
+			result.append(os.path.join(stats_dir, config["data_sample_name"] + ".spes." + base + "_stats.txt"))
 	return result
 
 def call_set_files():
@@ -75,7 +78,7 @@ def call_set_files():
 	if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0:
 		present = True
 	if present:
-		result = [os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.rck.vcf"),
+		result = [os.path.join(vcf_dir, config["data_sample_name"] + ".spes.rck.vcf"),
 		   		  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")]
 	return result
 
@@ -131,14 +134,14 @@ def expected_long_spes():
 	# print("test")
 	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
-	result = [os.path.join(aggreagate_merged_dir, base + ".spes.rck.vcf") for base in long_read_bases]
+	result = [os.path.join(stats_dir, base + ".spes.rck.vcf") for base in long_read_bases]
 	# print(result)
 	return result
 
 def expected_long_stats():
 	long_read_bams = config["data_input"]["bams"].get("long", [])
 	long_read_bases = [os.path.basename(name).split(".")[0] for name in long_read_bams]
-	result = [os.path.join(aggreagate_merged_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
+	result = [os.path.join(stats_dir, base + ".spes.svtype_stats.txt") for base in long_read_bases]
 	return result
 
 
@@ -150,9 +153,9 @@ rule get_merged_all:
 
 rule get_filtered_rck_vcf:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.rck.vcf")
+	output: os.path.join(vcf_dir, config["data_sample_name"] + ".spes.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log:	os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.rck.vcf.log")
+	log:	os.path.join(vcf_dir, "log", config["data_sample_name"] + ".spes.rck.vcf.log")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=config["data_sample_name"] + "_call_set",
@@ -164,9 +167,9 @@ rule get_filtered_rck_vcf:
 
 rule get_filtered_call_set_svtype_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.svtype_stats.txt")
+	output: os.path.join(stats_dir, config["data_sample_name"] + ".spes.svtype_stats.txt")
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log:	os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.svtype_stats.txt.log")
+	log:	os.path.join(stats_dir, "log", config["data_sample_name"] + ".spes.svtype_stats.txt.log")
 	params:
 		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"]
 	shell:
@@ -174,9 +177,9 @@ rule get_filtered_call_set_svtype_stats:
 
 rule get_filtered_call_set_main_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.main_stats.txt")
+	output: os.path.join(stats_dir, config["data_sample_name"] + ".spes.main_stats.txt")
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log:	os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.main_stats.txt.log")
+	log:	os.path.join(stats_dir, "log", config["data_sample_name"] + ".spes.main_stats.txt.log")
 	params:
 		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
 		sources_field=lambda wc: (config["data_sample_name"] + "_sens_supporting_sources").lower(),
@@ -185,9 +188,9 @@ rule get_filtered_call_set_main_stats:
 
 rule get_filtered_call_set_short_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.short_stats.txt")
+	output: os.path.join(stats_dir, config["data_sample_name"] + ".spes.short_stats.txt")
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log:	os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.short_stats.txt.log")
+	log:	os.path.join(stats_dir, "log", config["data_sample_name"] + ".spes.short_stats.txt.log")
 	params:
 		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
 		sources_field=lambda wc: (config["data_sample_name"] + "_short_sens_supporting_sources").lower(),
@@ -196,9 +199,9 @@ rule get_filtered_call_set_short_stats:
 
 rule get_filtered_call_set_long_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".spes.{long_base}_stats.txt")
+	output: os.path.join(stats_dir, config["data_sample_name"] + ".spes.{long_base}_stats.txt")
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log: os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".spes.{long_base}_stats.txt.log")
+	log: os.path.join(stats_dir, "log", config["data_sample_name"] + ".spes.{long_base}_stats.txt.log")
 	params:
 		rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
 		sources_field=lambda wc: (wc.long_base + "_sens_supporting_sources").lower(),
@@ -208,7 +211,7 @@ rule get_filtered_call_set_long_stats:
 rule get_filtered_call_set:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
 	input:  rck_adj=os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv"),
-		    vcf=os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".sens.rck.vcf"),
+		    vcf=os.path.join(vcf_dir, config["data_sample_name"] + ".sens.rck.vcf"),
 	conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: 	os.path.join(rck_dir, "log", config["data_sample_name"] + ".spes.rck.adj.tsv.log")
 	params:
@@ -222,9 +225,9 @@ rule get_filtered_call_set:
 
 rule get_merged_sens_vcf:
 	input: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
-	output: os.path.join(aggreagate_merged_dir, config["data_sample_name"] + ".sens.rck.vcf")
+	output: os.path.join(vcf_dir, config["data_sample_name"] + ".sens.rck.vcf")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-	log: os.path.join(aggreagate_merged_dir, "log", config["data_sample_name"] + ".sens.rck.vcf")
+	log: os.path.join(vcf_dir, "log", config["data_sample_name"] + ".sens.rck.vcf")
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=config["data_sample_name"] + "sens_call_set",
@@ -236,7 +239,7 @@ rule get_merged_sens_vcf:
 
 rule get_merged_sens_call_set_rck:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
-	input:  survivor_vcf=os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor.vcf"),
+	input:  survivor_vcf=os.path.join(survivor_dir, config["data_sample_name"] + ".sens.survivor.vcf"),
 			rck_files=merge_input_rck_files(),
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	log: os.path.join(rck_dir, "log", config["data_sample_name"] + ".sens.rck.adj.tsv.log")
@@ -253,10 +256,10 @@ rule get_merged_sens_call_set_rck:
 		"{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} {params.chr_include} {params.chr_include_file} {params.chr_exclude} {params.chr_exclude_file}  --samples {params.samples} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output} &> {log}"
 
 rule get_merged_sens_call_set_survivour:
-	output: os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor.vcf")
-	input:  os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor")
+	output: os.path.join(survivor_dir, config["data_sample_name"] + ".sens.survivor.vcf")
+	input:  os.path.join(survivor_dir, config["data_sample_name"] + ".sens.survivor")
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["survivor"]["conda"])
-	log: os.path.join(merged_dir, "log", config["data_sample_name"] + ".sens.survivor.vcf.log")
+	log: os.path.join(survivor_dir, "log", config["data_sample_name"] + ".sens.survivor.vcf.log")
 	params:
 		survivor=tools_methods["survivor"]["path"],
 		max_distance=config["data_merge_sens"]["survivor"]["cross_techbam_distance"],
@@ -270,8 +273,8 @@ rule get_merged_sens_call_set_survivour:
 
 
 rule get_merged_sens_call_set_survivour_config:
-	output: os.path.join(merged_dir, config["data_sample_name"] + ".sens.survivor")
-	input:  merge_input_rck_vcf_files()
+	output: os.path.join(survivor_dir, config["data_sample_name"] + ".sens.survivor")
+	input:  merge_input_rck_survivor_vcf_files()
 	run:
 		with open(output[0], "wt") as dest:
 			for file_name in input:
