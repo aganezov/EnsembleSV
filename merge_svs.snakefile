@@ -15,6 +15,15 @@ short_methods = [method for method in config["tools_enabled_methods"] if method 
 long_read_bams = config["data_input"]["bams"]["long"] if "long" in config["data_input"]["bams"] else []
 long_read_bases = [os.path.basename(name).split(".") [0] for name in long_read_bams] if len(long_methods) > 0 and "long" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["long"]) > 0 else []
 
+
+def alt_ref_extra_flag_entries(case):
+	result = []
+	for base in long_read_bases:
+		for method in long_methods:
+			result.append(str(base) + "_" +str(method) + "_" + str(case))
+	return ",".join(result)
+
+
 def merge_input_rck_vcf_files():
 	result = []
 	if len(short_methods) > 0 and (("illumina" in config["data_input"]["bams"] and len(config["data_input"]["bams"]["illumina"]) > 0) or ("linked" in config["data_input"]["bams"] and  len(config["data_input"]["bams"]["linked"]) > 0)):
@@ -139,8 +148,10 @@ rule get_filtered_rck_vcf:
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=config["data_sample_name"] + "_call_set",
+		ref_extra=lambda wc: alt_ref_extra_flag_entries(case="ref"),
+		alt_extra=lambda wc: alt_ref_extra_flag_entries(case="alt"),
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
 rule get_filtered_call_set_svtype_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
@@ -208,8 +219,10 @@ rule get_merged_sens_vcf:
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=config["data_sample_name"] + "sens_call_set",
+		ref_extra=lambda wc: alt_ref_extra_flag_entries(case="ref"),
+		alt_extra=lambda wc: alt_ref_extra_flag_entries(case="alt"),
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} &> {log}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra}  &> {log}"
 
 rule get_merged_sens_call_set_rck:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
