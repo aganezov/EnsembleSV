@@ -75,8 +75,8 @@ rule get_long_spes:
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_spes",
-		ref_extra=lambda wc: [wc.base + "_" + method + "_ref" for method in long_methods],
-		alt_extra=lambda wc: [wc.base + "_" + method + "_alt" for method in long_methods],
+		ref_extra=lambda wc: ",".join([wc.base + "_" + method + "_ref" for method in long_methods]),
+		alt_extra=lambda wc: ",".join([wc.base + "_" + method + "_alt" for method in long_methods]),
 	shell:
 		"{params.rck_adj_rck2x} vcf-sniffles {input.rck_adj} --dummy-clone {params.dummy_clone} -o {output}  --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
@@ -121,8 +121,8 @@ rule get_long_sens_rck_vcf:
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
 		dummy_clone=lambda wc: wc.base + "_sens",
-		ref_extra=lambda wc: [wc.base + "_" + method + "_ref" for method in long_methods],
-		alt_extra=lambda wc: [wc.base + "_" + method + "_alt" for method in long_methods],
+		ref_extra=lambda wc: ",".join([wc.base + "_" + method + "_ref" for method in long_methods]),
+		alt_extra=lambda wc: ",".join([wc.base + "_" + method + "_alt" for method in long_methods]),
 	shell:
 		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
