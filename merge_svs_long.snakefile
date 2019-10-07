@@ -79,7 +79,7 @@ rule get_long_sens_vcf_survivor:
 	conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
 	params:
 		rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
-		dummy_clone=lambda wc: wc.base + "_spes",
+		dummy_clone=lambda wc: wc.base + "_sens",
 		ref_extra=lambda wc: ",".join([wc.base + "_" + method + "_ref" for method in long_methods]),
 		alt_extra=lambda wc: ",".join([wc.base + "_" + method + "_alt" for method in long_methods]),
 	shell:
