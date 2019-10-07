@@ -23,6 +23,14 @@ def alt_ref_extra_flag_entries(case):
 			result.append(str(base) + "_" +str(method) + "_" + str(case))
 	return ",".join(result)
 
+# enc0002_sniffles_or_gt
+def gt_dummy_extra_flag_entries():
+	result = []
+	for base in long_read_bases:
+		for method in long_methods:
+			result.append(str(base) + "_" +str(method) + "_or_gt")
+	return ",".join(result)
+
 
 def merge_input_rck_vcf_files():
 	result = []
@@ -150,8 +158,9 @@ rule get_filtered_rck_vcf:
 		dummy_clone=config["data_sample_name"] + "_call_set",
 		ref_extra=lambda wc: alt_ref_extra_flag_entries(case="ref"),
 		alt_extra=lambda wc: alt_ref_extra_flag_entries(case="alt"),
+		gt_dummy_extra=lambda wc: gt_dummy_extra_flag_entries(),
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} --dummy-clone-gt-extra {params.gt_dummy_extra} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
 rule get_filtered_call_set_svtype_stats:
 	input:  os.path.join(rck_dir, config["data_sample_name"] + ".spes.rck.adj.tsv")
@@ -221,8 +230,9 @@ rule get_merged_sens_vcf:
 		dummy_clone=config["data_sample_name"] + "sens_call_set",
 		ref_extra=lambda wc: alt_ref_extra_flag_entries(case="ref"),
 		alt_extra=lambda wc: alt_ref_extra_flag_entries(case="alt"),
+		gt_dummy_extra=lambda wc: gt_dummy_extra_flag_entries(),
 	shell:
-		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra}  &> {log}"
+		"{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} --dummy-clone-gt-extra {params.gt_dummy_extra} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra}  &> {log}"
 
 rule get_merged_sens_call_set_rck:
 	output: os.path.join(rck_dir, config["data_sample_name"] + ".sens.rck.adj.tsv")
