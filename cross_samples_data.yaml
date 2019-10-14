@@ -27,7 +27,7 @@ data_input:
         base: "enc003"
 
 data_output:
-  corss_samples:
+  cross_samples:
     dir: "cross_samples"
     vcf: "vcf"
     rck: "rck"
