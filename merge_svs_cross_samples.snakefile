@@ -1,4 +1,5 @@
 configfile: "data.yaml"
+configfile: "cross_samples_data.yaml"
 configfile: "sv_tools.yaml"
 import os
 
