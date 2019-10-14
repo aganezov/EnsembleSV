@@ -158,6 +158,7 @@ rule annotated_rck: # only for original samples
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
     output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.{suffix}.rck.adj.tsv")
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log:    os.path.join(cross_samples_output_dir_rck, "log", "{sample," + samples_regex + "}.{suffix}.rck.adj.tsv")
     params:
         ann_prefix=lambda wc: wc.sample + "_" + wc.suffix + "_" + exp_name,
     run:
@@ -188,6 +189,7 @@ rule spes_experiment_rck: # for overall experiment sv set only
     input: sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
            sample_spes=lambda wc: all_original_rcks(suffix="spes")
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log:    os.path.join(cross_samples_output_dir_rck, "log", exp_name + ".spes.rck.adj.tsv")
     run:
         import sys
         with open(log[0], "w") as stdout:
