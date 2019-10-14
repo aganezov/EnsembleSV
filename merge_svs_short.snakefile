@@ -6,10 +6,10 @@ import os
 tools_methods = config["tools_methods"]
 pre_merge_aggregate_dir = config["data_output"]["pre_merge_process"]["dir"]
 merged_dir = config["data_output"]["merge"]["dir"]
-rck_dir = os.path.join(merged_dir, config["data_output"]["rck"]["dir"])
-vcf_dir = os.path.join(merged_dir, config["data_output"]["vcf"]["dir"])
-stats_dir = os.path.join(merged_dir, config["data_output"]["stats"]["dir"])
-survivor_dir = os.path.join(merged_dir, config["data_output"]["survivor"]["dir"])
+rck_dir = os.path.join(merged_dir, config["data_output"].get("rck", {}).get("dir", "rck"))
+vcf_dir = os.path.join(merged_dir, config["data_output"].get("vcf", {}).get("dir", "vcf"))
+stats_dir = os.path.join(merged_dir, config["data_output"].get("stats", {}).get("dir", "stats"))
+survivor_dir = os.path.join(merged_dir, config["data_output"].get("survivor", {}).get("dir", "survivor"))
 aggreagate_merged_dir = os.path.join(merged_dir, "merged")
 raw_sv_calls_dir = os.path.join(config["data_output"]["raw_sv_calls"]["dir"], "raw")
 illumina_methods = [method for method in config["tools_enabled_methods"] if method in config["tools_read_type_to_method"]["illumina"]]
