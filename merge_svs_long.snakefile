@@ -175,7 +175,7 @@ rule run_long_sens_survivor:
 	log: os.path.join(survivor_dir, "log", "{base," + long_bases_regex +"}.sens.survivor.vcf.log")
 	params:
 		survivor=tools_methods["survivor"]["path"],
-		max_distance=config["data_merge_sens"]["survivor"]["same_techbam_distance"],
+		max_distance=config["data_merge_sens"]["survivor"].get("same_techbam_distance", 500),
 		min_caller_cnt=1,
 		sv_type_consider=1,
 		sv_strands_consider=1,

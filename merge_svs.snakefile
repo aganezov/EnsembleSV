@@ -262,7 +262,7 @@ rule get_merged_sens_call_set_survivour:
 	log: os.path.join(survivor_dir, "log", config["data_sample_name"] + ".sens.survivor.vcf.log")
 	params:
 		survivor=tools_methods["survivor"]["path"],
-		max_distance=config["data_merge_sens"]["survivor"]["cross_techbam_distance"],
+		max_distance=config["data_merge_sens"]["survivor"].get("cross_techbam_distance", 1000),
 		min_caller_cnt=1,
 		sv_type_consider=1,
 		sv_strands_consider=1,
