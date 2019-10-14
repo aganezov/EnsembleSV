@@ -219,7 +219,7 @@ rule sens_experiment_rck: # for overall experiment sv set only
     params:
         rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
         samples=lambda wc: ",".join(sample + "_sens" for sample in sorted(cross_samples_to_bases.keys())),
-        samples_source=lambda wc: [original_rck(sample=sample, suffix="sens") for sample in sorted(cross_samples_to_bases.keys())],
+        samples_source=lambda wc: ",".join([original_rck(sample=sample, suffix="sens") for sample in sorted(cross_samples_to_bases.keys())]),
         suffix=lambda wc: exp_name.lower(),
         sample_name_prefix=lambda wc: "--samples-suffix-extra" if config["data_merge"].get("sample_name_prefix", False) else ""
     shell:
