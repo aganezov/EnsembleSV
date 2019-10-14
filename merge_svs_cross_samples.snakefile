@@ -99,7 +99,7 @@ rule annotated_rck: # only for original samples
     # reading original rck and experiment merged sens rck, and recording support_ids and sources as annotations
     input:  original=lambda wildcards: original_rck(sample=wildcards.sample, suffix=wildcards.suffix),
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
-    output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.{suffix}.rck.adj.tsv")
+    output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.{suffix,(spes|sens)}.rck.adj.tsv")
 
 rule spes_experiment_rck: # for overall experiment sv set only
     # reading all merged SVs and retaining only those, that have supporting sample-spes SV origins
