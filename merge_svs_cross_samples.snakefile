@@ -57,8 +57,7 @@ def sample_rck_dir_path(sample):
 
 
 def original_rck(sample, suffix="spes"):
-    return os.path.join(sample_rck_dir_path(sample=sample),
-                        f'{cross_samples_to_bases[sample]}.{suffix}.rck.adj.tsv')
+    return os.path.join(sample_rck_dir_path(sample=sample), f'{cross_samples_to_bases[sample]}.{suffix}.rck.adj.tsv')
 
 def all_original_rcks(suffix="spes"):
     return [original_rck(sample=sample, suffix=suffix) for sample in cross_samples_to_bases.keys()]
@@ -98,7 +97,7 @@ rule unique_rck:    # only for original samples
 
 rule annotated_rck: # only for original samples
     # reading original rck and experiment merged sens rck, and recording support_ids and sources as annotations
-    input:  original=lambda wc: original_rck(sample=wc.sample, suffix=wc.suffix),
+    input:  original=lambda wildcards: original_rck(sample=wildcards.sample, suffix=wildcards.suffix),
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
     output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.{suffix}.rck.adj.tsv")
 
