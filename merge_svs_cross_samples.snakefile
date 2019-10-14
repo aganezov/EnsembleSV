@@ -47,7 +47,7 @@ def expected_stats_files():
                 result.append(os.path.join(cross_samples_output_dir_stats, f"{sample}.{suffix}.{stats_type}.txt"))
     for suffix in ["spes", "sens"]:
         for stats_type in ["svtypes"]:
-            result.append(os.path.join(cross_samples_output_dir_vcf, f"{exp_name}.{suffix}.{stats_type}.txt"))
+            result.append(os.path.join(cross_samples_output_dir_stats, f"{exp_name}.{suffix}.{stats_type}.txt"))
     return result
 
 
