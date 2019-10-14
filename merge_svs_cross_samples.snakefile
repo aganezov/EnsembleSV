@@ -223,7 +223,7 @@ rule sens_experiment_rck: # for overall experiment sv set only
         suffix=lambda wc: exp_name.lower(),
         sample_name_prefix=lambda wc: "--samples-suffix-extra" if config["data_merge"].get("sample_name_prefix", False) else ""
     shell:
-        "{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} --samples {params.samples} {params.sample_name_prefix} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output} &> {log}"
+        "{params.rck_adj_x2rck} survivor {input.survivor_vcf} --id-suffix {params.suffix} --samples {params.samples} {params.sample_name_prefix} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output} &> {log}"
 
 rule sens_experiment_run_survivor:
     output: os.path.join(cross_samples_output_dir_survivor, exp_name + ".sens.survivor.vcf")
