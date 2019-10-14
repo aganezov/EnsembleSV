@@ -119,7 +119,7 @@ rule sens_experiment_run_survivor:
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["survivor"]["conda"])
     log:    os.path.join(cross_samples_output_dir_survivor, "log", exp_name + ".sens.survivor.vcf.log")
     params:
-		survivor=tools_methods["survivor"]["path"],
+        survivor=tools_methods["survivor"]["path"],
 		max_distance=config["data_merge"]["survivor"].get("max_distance", 1000),
 		min_caller_cnt=1,
 		sv_type_consider=config["data_merge"]["survivor"].get("svtype", 1),
