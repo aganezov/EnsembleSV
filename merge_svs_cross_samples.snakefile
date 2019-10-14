@@ -104,9 +104,9 @@ rule rck_to_vcf: # for all SV sets
 rule svtype_stats: # for all SV sets
     # simple RCK powered stats
     input:  os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.rck.adj.tsv")
-    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.svtype.txt")
+    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.svtypes.txt")
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-    log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.svtype.txt.log")
+    log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.svtypes.txt.log")
     params:
         rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
     shell:
@@ -129,23 +129,28 @@ rule unique_rck:    # only for original samples
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
     output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.unique.rck.adj.tsv")
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log:    os.path.join(cross_samples_output_dir_rck, "log", "{sample," + samples_regex + "}.unique.rck.adj.tsv.log")
     run:
-        from collections import defaultdict
-        import itertools
-        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
-        original = read_adjacencies_from_file(file_name=input.original)
-        exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
-        exp_sens_supporting_ids_pairing = defaultdict(list)
-        for adj in exp_sens:
-            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
-            for id1, id2 in itertools.permutations(supporting_ids, r=2):
-                exp_sens_supporting_ids_pairing[id1].append(id2)
-        unique = []
-        for adj in original:
-            merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
-            if len(merged_with) == 0:
-                unique.append(adj)
-        write_adjacencies_to_file(file_name=output[0], adjacencies=unique)
+        import sys
+        with open(log[0], "w") as stdout:
+            sys.stdout = stdout
+            sys.stderr = stdout
+            from collections import defaultdict
+            import itertools
+            from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+            original = read_adjacencies_from_file(file_name=input.original)
+            exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
+            exp_sens_supporting_ids_pairing = defaultdict(list)
+            for adj in exp_sens:
+                supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+                for id1, id2 in itertools.permutations(supporting_ids, r=2):
+                    exp_sens_supporting_ids_pairing[id1].append(id2)
+            unique = []
+            for adj in original:
+                merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
+                if len(merged_with) == 0:
+                    unique.append(adj)
+            write_adjacencies_to_file(file_name=output[0], adjacencies=unique)
 
 rule annotated_rck: # only for original samples
     # reading original rck and experiment merged sens rck, and recording support_ids and sources as annotations
@@ -156,21 +161,25 @@ rule annotated_rck: # only for original samples
     params:
         ann_prefix=lambda wc: wc.sample + "_" + wc.suffix + "_" + exp_name,
     run:
-        from collections import defaultdict
-        import itertools
-        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
-        original = read_adjacencies_from_file(file_name=input.original)
-        exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
-        exp_sens_supporting_ids_pairing = defaultdict(list)
-        for adj in exp_sens:
-            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
-            for id1, id2 in itertools.permutations(supporting_ids, r=2):
-                exp_sens_supporting_ids_pairing[id1].append(id2)
-        for adj in original:
-            merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
-            if len(merged_with) > 0:
-                adj.extra[params.ann_prefix + "_merged_with"] = ",".join(set(merged_with))
-        write_adjacencies_to_file(file_name=output[0], adjacencies=original)
+        import sys
+        with open(log[0], "w") as stdout:
+            sys.stdout = stdout
+            sys.stderr = stdout
+            from collections import defaultdict
+            import itertools
+            from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+            original = read_adjacencies_from_file(file_name=input.original)
+            exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
+            exp_sens_supporting_ids_pairing = defaultdict(list)
+            for adj in exp_sens:
+                supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+                for id1, id2 in itertools.permutations(supporting_ids, r=2):
+                    exp_sens_supporting_ids_pairing[id1].append(id2)
+            for adj in original:
+                merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
+                if len(merged_with) > 0:
+                    adj.extra[params.ann_prefix + "_merged_with"] = ",".join(set(merged_with))
+            write_adjacencies_to_file(file_name=output[0], adjacencies=original)
 
 
 rule spes_experiment_rck: # for overall experiment sv set only
@@ -180,21 +189,25 @@ rule spes_experiment_rck: # for overall experiment sv set only
            sample_spes=lambda wc: all_original_rcks(suffix="spes")
     conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
     run:
-        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
-        exp_sensitive_adjacencies = read_adjacencies_from_file(file_name=input.sens)
-        spes_original_adjs_ids = set()
-        for sample_file in input.sample_spes:
-            adjacencies = read_adjacencies_from_file(file_name=sample_file)
-            for adj in adjacencies:
-                spes_original_adjs_ids.add(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased))
-        exp_spes_adj = []
-        for adj in exp_sensitive_adjacencies:
-            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
-            for sup_id in supporting_ids:
-                if sup_id in spes_original_adjs_ids:
-                    exp_spes_adj.append(adj)
-                    break
-        write_adjacencies_to_file(file_name=output[0], adjacencies=exp_spes_adj)
+        import sys
+        with open(log[0], "w") as stdout:
+            sys.stdout = stdout
+            sys.stderr = stdout
+            from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+            exp_sensitive_adjacencies = read_adjacencies_from_file(file_name=input.sens)
+            spes_original_adjs_ids = set()
+            for sample_file in input.sample_spes:
+                adjacencies = read_adjacencies_from_file(file_name=sample_file)
+                for adj in adjacencies:
+                    spes_original_adjs_ids.add(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased))
+            exp_spes_adj = []
+            for adj in exp_sensitive_adjacencies:
+                supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+                for sup_id in supporting_ids:
+                    if sup_id in spes_original_adjs_ids:
+                        exp_spes_adj.append(adj)
+                        break
+            write_adjacencies_to_file(file_name=output[0], adjacencies=exp_spes_adj)
 
 rule sens_experiment_rck: # for overall experiment sv set only
     # regular RCK powered survivor to rck conversion
@@ -232,10 +245,15 @@ rule sens_experiment_run_survivor:
 rule sens_experiment_prepare_survivor:
     output: os.path.join(cross_samples_output_dir_survivor, exp_name + ".sens.survivor")
     input:  original_sens_rcks=[os.path.join(cross_samples_output_dir_survivor, f"{sample}.sens.survivor.vcf") for sample in cross_samples_to_bases.keys()]
+    log:    os.path.join(cross_samples_output_dir_survivor, "log", exp_name + ".sens.survivor.log")
     run:
-        with open(output[0], "wt") as dest:
-            for file_name in input:
-                print(file_name, file=dest)
+        import sys
+        with open(log[0], "w") as stdout:
+            sys.stdout = stdout
+            sys.stderr = stdout
+            with open(output[0], "wt") as dest:
+                for file_name in input:
+                    print(file_name, file=dest)
 
 rule sens_original_rck_survivor_suitable:
     output: os.path.join(cross_samples_output_dir_survivor, "{sample}.sens.survivor.vcf")
@@ -261,64 +279,3 @@ rule generate_original_sample_generic_rck_from_vcf:
 
 
 ruleorder: unique_rck > annotated_rck
-
-
-
-
-
-
-
-
-
-rule spes_to_unqiue:
-    output: os.path.join(cross_samples_output_dir, "{base}.spes.unique.rck.adj.tsv")
-    input: spes=lambda wc: os.path.join(config["cross_samples"][wc.base]["EnsembleSV_path"], "merged_sv_calls", "rck", wc.base + ".spes.rck.adj.tsv"),
-         survivor_merge=os.path.join(cross_samples_output_dir, "survivor", "{base}.vRestSens.vcf"),
-    log: os.path.join(cross_samples_output_dir, "log", "{base}.spes.unique.rck.adj.tsv.log")
-    conda: os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
-    run:
-        import vcf
-        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
-
-        unique_adj_ids = set()
-        with open(input.survivor_merge, "rt") as source:
-            vcf_reader = vcf.Reader(source)
-            if "RNAMES" in vcf_reader.infos:
-                vcf_reader.infos["RNAMES"] = vcf_reader.infos["RNAMES"]._replace(num='.')
-            for record in vcf_reader:
-                supp_vec = svtype = record.INFO.get("SUPP_VEC", "01")
-                if supp_vec[0] == "0" or "1" in supp_vec[1:]:
-                    continue
-                for vcf_sample in record.samples:
-                    adj_id = vcf_sample.data.ID.split(",")[0]
-                    if adj_id == "NaN":
-                        continue
-                    unique_adj_ids.add(adj_id)
-        adjs = read_adjacencies_from_file(input.spes)
-        adjacencies = [adj for adj in adjs if adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased) in unique_adj_ids]
-        write_adjacencies_to_file(output[0], adjacencies)
-
-rule survivor_merge:
-    input: os.path.join(cross_samples_output_dir, "survivor", "{base}.vRestSens.survivor"),
-    output: os.path.join(cross_samples_output_dir, "survivor", "{base}.vRestSens.vcf"),
-    params:
-          survivor="SURVIVOR",
-          max_distance=1000,
-          min_caller_cnt=1,
-          sv_type_consider=0,
-          sv_strands_consider=1,
-          distance_estimate=0,
-          min_sv_size=30,
-    shell:
-         "{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output}"
-
-rule survivor_merge_config:
-    output: os.path.join(cross_samples_output_dir, "survivor", "{base}.vRestSens.survivor"),
-    input: spes=lambda wc: os.path.join(config["cross_samples"][wc.base]["EnsembleSV_path"], "merged_sv_calls", "merged", wc.base + ".spes.rck.vcf"),
-         rest_sens=lambda wc: [os.path.join(config["cross_samples"][base]["EnsembleSV_path"], "merged_sv_calls", "merged", base + ".sens.rck.vcf") for base in cross_samples_bases
-                               if base != wc.base],
-    run:
-        with open(output[0], "wt") as dest:
-            print(input.spes, file=dest)
-            for file_name in input.rest_sens:
-                print(file_name, file=dest)
