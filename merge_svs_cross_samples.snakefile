@@ -120,12 +120,12 @@ rule sens_experiment_run_survivor:
     log:    os.path.join(cross_samples_output_dir_survivor, "log", exp_name + ".sens.survivor.vcf.log")
     params:
         survivor=tools_methods["survivor"]["path"],
-		max_distance=config["data_merge"]["survivor"].get("max_distance", 1000),
-		min_caller_cnt=1,
-		sv_type_consider=config["data_merge"]["survivor"].get("svtype", 1),
-		sv_strands_consider=config["data_merge"]["survivor"].get("strands", 1),
-		distance_estimate=0,
-		min_sv_size=config["data_merge"]["survivor"].get("max_distance", 30)
+        max_distance=config["data_merge"]["survivor"].get("max_distance", 1000),
+        min_caller_cnt=1,
+        sv_type_consider=config["data_merge"]["survivor"].get("svtype", 1),
+        sv_strands_consider=config["data_merge"]["survivor"].get("strands", 1),
+        distance_estimate=0,
+        min_sv_size=config["data_merge"]["survivor"].get("max_distance", 30)
     shell:
         "{params.survivor} merge {input} {params.max_distance} {params.min_caller_cnt} {params.sv_type_consider} {params.sv_strands_consider} {params.distance_estimate} {params.min_sv_size} {output} &> {log}"
 
