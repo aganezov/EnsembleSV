@@ -1,0 +1,45 @@
+
+data_input:
+                                  ###########
+  cross_samples:                  # List of samples to process. Order matters for deciding from whcih sample to pull the ALT, REF, and GT info in the output VCF
+                                  ###########
+    ENC0002:                      # sample name. Will be used in producing sample-unique SV callsets and merged results
+      EnsembleSV:                 # Input is expected in EnsembleSV output format with sens, spes SV calls in RCK ADJ format
+        dir: ""                   #   path to sample EnsembleSV output dir, by default set to {base}_EnsembleSV
+        rck_sub: "rck"            #   subpath in the &dir path with RCK ADJ SV callsets
+        base: "enc002"            # base name. Defaults to {sample_name}. Used to access actual files (e.g., {base}.spes.rck.adj.tsv)
+                                  ###########
+      rck:                        # if no Ensemble SV format data is available, a separate RCK ADJ format SV callset can be provided
+        path: ""                  #    a path to a stand-alone RCK SV callset. Defaults to {base}.rck.adj.tsv
+                                  ###########
+      vcf:                        # if no EnsembleSV format data is available, and no RCK ADJ standalone SV callset is provided, it will be generated from input VCF.
+        path: ""                  #   path to the non-EnsembleSV VCF to process. defaults to {base}.vcf or {base}.vcf
+        format: "sniffles"        #   format from which the non-EnsembleSV VCF will be converted to the RCK file
+        append_id: ""             #   a suffix to append to original SV ids as they are converted to RCK
+                                  ############
+      ref_field:  "ref"           # RCK ADJ extra field name (can be comma separated for multiple fields) from where to extract REF seq to output in VCF
+      alt_field:  "alt"           # RCK ADJ extra field name (can be comma separated for multiple fields) from where to extract ALT seq to output in VCF
+      gt_field:   "gt"            # RCK ADJ extra field name (can be comma separated for multiple fields) from where to extract GT value to output in VCF
+                                  ############
+    ENC0003:
+      EnsembleSV:
+        dir: ""
+        base: "enc003"
+
+data_output:
+  corss_samples:
+    dir: "cross_samples"
+    vcf: "vcf"
+    rck: "rck"
+    stats: "stats"
+    survivor: "survivor"
+
+data_merge:
+  survivor:
+    max_distance: 1000
+    min_length: 30
+    svtype: 1
+    strands: 1
+
+
+data_experiment_name: "DEFAULT"
