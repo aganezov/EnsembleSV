@@ -40,6 +40,7 @@ data_merge:
     min_length: 30
     svtype: 1
     strands: 1
+  # sample_name_prefix: False
 
 
 data_experiment_name: "DEFAULT"

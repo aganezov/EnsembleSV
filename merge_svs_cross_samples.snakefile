@@ -12,9 +12,16 @@ cross_samples_output_dir_survivor = os.path.join(cross_samples_output_dir, confi
 exp_name = config.get("data_experiment_name", "DEFAULT")
 
 cross_samples_to_bases = {}
+cross_samples_to_refs = {}
+cross_samples_to_alts = {}
+cross_samples_to_gt =   {}
+
 for sample, data in config["data_input"]["cross_samples"].items():
     base = data.get("EnsembleSV", {}).get("base", sample)
     cross_samples_to_bases[sample] = base
+    cross_samples_to_refs[sample] = data.get("ref_field", "ref")
+    cross_samples_to_alts[sample] = data.get("alt_field", "alt")
+    cross_samples_to_gt[sample] = data.get("gt_field", "or_gt")
 
 samples_regex = long_methods_regex = "(" + "|".join(cross_samples_to_bases.keys()) + ")"
 
@@ -43,7 +50,7 @@ def expected_stats_files():
     result = []
     for sample, base in cross_samples_to_bases.items():
         for suffix in ["spes", "sens", "unique"]:
-            for stats_type in ["svtypes"]:
+            for stats_type in ["svtypes", "samples"]:
                 result.append(os.path.join(cross_samples_output_dir_stats, f"{sample}.{suffix}.{stats_type}.txt"))
     for suffix in ["spes", "sens"]:
         for stats_type in ["svtypes"]:
@@ -83,35 +90,127 @@ rule rck_to_vcf: # for all SV sets
     # simple conversion to VCF from RCK
     input:  os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.rck.adj.tsv")
     output: os.path.join(cross_samples_output_dir_vcf, "{sample}.{suffix}.rck.vcf")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log:    os.path.join(cross_samples_output_dir_vcf, "log", "{sample}.{suffix}.rck.vcf.log")
+    params:
+        rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
+        dummy_clone=lambda wc: wc.sample + "_" + wc.suffix,
+        ref_extra=lambda wc: cross_samples_to_refs[wc.sample] if wc.sample in cross_samples_to_refs else ",".join(cross_samples_to_refs.values()),
+        alt_extra=lambda wc: cross_samples_to_refs[wc.sample] if wc.sample in cross_samples_to_alts else ",".join(cross_samples_to_alts.values()),
+        gt_dummy_extra=lambda wc: cross_samples_to_gt[wc.sample] if wc.sample in cross_samples_to_gt else ",".join(cross_samples_to_gt.values()),
+    shell:
+        "{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} --dummy-clone-gt-extra {params.gt_dummy_extra} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
 
-rule stats: # for all SV sets
+rule svtype_stats: # for all SV sets
     # simple RCK powered stats
     input:  os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.rck.adj.tsv")
-    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.{svtype}.txt")
+    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.svtype.txt")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.svtype.txt.log")
+    params:
+        rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
+    shell:
+        "{params.rck_adj_stats} survivor-stat {input} --sources-field svtype -o {output} &> {log}"
+
+rule samples_stats:
+    input:  os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.rck.adj.tsv")
+    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.samples.txt")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.samples.txt.log")
+    params:
+        rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
+        source_field=lambda wc: exp_name.lower() + "_supporting_sources"
+    shell:
+        "{params.rck_adj_stats} survivor-stat {input} --sources-field {params.source_field} -o {output} &> {log}"
 
 rule unique_rck:    # only for original samples
     # based on supporting_ids_field
-    input:  original_rck=os.path.join(cross_samples_output_dir_rck, "{sample}.spes.rck.adj.tsv"),
+    input:  original=os.path.join(cross_samples_output_dir_rck, "{sample}.spes.rck.adj.tsv"),
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
     output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.unique.rck.adj.tsv")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    run:
+        from collections import defaultdict
+        import itertools
+        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+        original = read_adjacencies_from_file(file_name=input.original)
+        exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
+        exp_sens_supporting_ids_pairing = defaultdict(list)
+        for adj in exp_sens:
+            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+            for id1, id2 in itertools.permutations(supporting_ids, r=2):
+                exp_sens_supporting_ids_pairing[id1].append(id2)
+        unique = []
+        for adj in original:
+            merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
+            if len(merged_with) == 0:
+                unique.append(adj)
+        write_adjacencies_to_file(file_name=output[0], adjacencies=unique)
 
 rule annotated_rck: # only for original samples
     # reading original rck and experiment merged sens rck, and recording support_ids and sources as annotations
     input:  original=lambda wildcards: original_rck(sample=wildcards.sample, suffix=wildcards.suffix),
             exp_sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
     output: os.path.join(cross_samples_output_dir_rck, "{sample," + samples_regex + "}.{suffix}.rck.adj.tsv")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    params:
+        ann_prefix=lambda wc: wc.sample + "_" + wc.suffix + "_" + exp_name,
+    run:
+        from collections import defaultdict
+        import itertools
+        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+        original = read_adjacencies_from_file(file_name=input.original)
+        exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
+        exp_sens_supporting_ids_pairing = defaultdict(list)
+        for adj in exp_sens:
+            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+            for id1, id2 in itertools.permutations(supporting_ids, r=2):
+                exp_sens_supporting_ids_pairing[id1].append(id2)
+        for adj in original:
+            merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
+            if len(merged_with) > 0:
+                adj.extra[params.ann_prefix + "_merged_with"] = ",".join(set(merged_with))
+        write_adjacencies_to_file(file_name=output[0], adjacencies=original)
+
 
 rule spes_experiment_rck: # for overall experiment sv set only
     # reading all merged SVs and retaining only those, that have supporting sample-spes SV origins
     output: os.path.join(cross_samples_output_dir_rck, exp_name + ".spes.rck.adj.tsv")
     input: sens=os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv"),
            sample_spes=lambda wc: all_original_rcks(suffix="spes")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    run:
+        from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
+        exp_sensitive_adjacencies = read_adjacencies_from_file(file_name=input.sens)
+        spes_original_adjs_ids = set()
+        for sample_file in input.sample_spes:
+            adjacencies = read_adjacencies_from_file(file_name=sample_file)
+            for adj in adjacencies:
+                spes_original_adjs_ids.add(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased))
+        exp_spes_adj = []
+        for adj in exp_sensitive_adjacencies:
+            supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
+            for sup_id in supporting_ids:
+                if sup_id in spes_original_adjs_ids:
+                    exp_spes_adj.append(adj)
+                    break
+        write_adjacencies_to_file(file_name=output[0], adjacencies=exp_spes_adj)
 
 rule sens_experiment_rck: # for overall experiment sv set only
     # regular RCK powered survivor to rck conversion
     output: os.path.join(cross_samples_output_dir_rck, exp_name + ".sens.rck.adj.tsv")
     input:  sample_sens=lambda wc: all_original_rcks(suffix="sens"),
             survivor_vcf=os.path.join(cross_samples_output_dir_survivor, exp_name + ".sens.survivor.vcf")
+    conda:  os.path.join(config["tools_methods_conda_dir"], tools_methods["rck"]["conda"])
+    log:    os.path.join(cross_samples_output_dir_rck, "log", exp_name + ".sens.rck.adj.tsv.log")
+    params:
+        rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
+        samples=lambda wc: ",".join(sample + "_sens" for sample in sorted(cross_samples_to_bases.keys())),
+        samples_source=lambda wc: [original_rck(sample=sample, suffix="sens") for sample in sorted(cross_samples_to_bases.keys())],
+        suffix=lambda wc: exp_name.lower(),
+        sample_name_prefix=lambda wc: "--samples-suffix-extra" if config["data_merge"].get("sample_name_prefix", False) else ""
+    shell:
+        "{params.rck_adj_x2rck} survivor {input.survivor} --id-suffix {params.suffix} --samples {params.samples} {params.sample_name_prefix} --samples-source {params.samples_source} --survivor-prefix {params.suffix} -o {output} &> {log}"
 
 rule sens_experiment_run_survivor:
     output: os.path.join(cross_samples_output_dir_survivor, exp_name + ".sens.survivor.vcf")
