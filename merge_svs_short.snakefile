@@ -139,10 +139,10 @@ rule get_short_sens_survivor:
 	log: os.path.join(survivor_dir, "log", config["data_sample_name"] + "_short.sens.survivor.vcf.log"),
 	params:
 		survivor=tools_methods["survivor"]["path"],
-		max_distance=config["data_merge_sens"]["survivor"]["same_techbam_distance"],
-		min_caller_cnt=config["data_merge_sens"]["min_cnt"]["short"],
-		sv_type_consider=1,
-		sv_strands_consider=1,
+		max_distance=config["data_merge_sens"]["survivor"].get("same_techbam_distance", 500),
+		min_caller_cnt=config["data_merge_sens"].get("min_cnt", {}).get("short", 2),
+		sv_type_consider=config["data_merge_sens"].get("svtype", 1),
+		sv_strands_consider=config["data_merge_sens"].get("strands", 1),
 		distance_estimate=0,
 		min_sv_size=lambda wc: min([config["data_merge_sens"]["min_len"]["illumina"], config["data_merge_sens"]["min_len"]["linked"]]),
 	shell:
