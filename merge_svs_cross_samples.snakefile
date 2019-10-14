@@ -52,8 +52,8 @@ def expected_stats_files():
 
 
 def sample_rck_dir_path(sample):
-    return os.path.join(config["data_input"]["cross_samples"][wc.sample].get("EnsembleSV", {}).get("dir", sample + "_EnsembleSV"),
-                        config["data_input"]["cross_samples"][wc.sample].get("EnsembleSV", {}).get("rck_sub", "rck"))
+    return os.path.join(config["data_input"]["cross_samples"][sample].get("EnsembleSV", {}).get("dir", sample + "_EnsembleSV"),
+                        config["data_input"]["cross_samples"][sample].get("EnsembleSV", {}).get("rck_sub", "rck"))
 
 
 def original_rck(sample, suffix="spes"):
