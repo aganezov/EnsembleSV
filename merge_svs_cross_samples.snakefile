@@ -87,7 +87,7 @@ rule rck_to_vcf: # for all SV sets
 rule stats: # for all SV sets
     # simple RCK powered stats
     input:  os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.rck.adj.tsv")
-    output: os.path.join(cross_samples_output_dir_rck, "{sample}.{suffix}.{svtype}.txt")
+    output: os.path.join(cross_samples_output_dir_stats, "{sample}.{suffix}.{svtype}.txt")
 
 rule unique_rck:    # only for original samples
     # based on supporting_ids_field
