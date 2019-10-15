@@ -53,7 +53,7 @@ def expected_stats_files():
             for stats_type in ["svtypes", "samples"]:
                 result.append(os.path.join(cross_samples_output_dir_stats, f"{sample}.{suffix}.{stats_type}.txt"))
     for suffix in ["spes", "sens"]:
-        for stats_type in ["svtypes"]:
+        for stats_type in ["svtypes", "samples"]:
             result.append(os.path.join(cross_samples_output_dir_stats, f"{exp_name}.{suffix}.{stats_type}.txt"))
     return result
 
@@ -119,7 +119,7 @@ rule samples_stats:
     log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.samples.txt.log")
     params:
         rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
-        source_field=lambda wc: exp_name.lower() + "_supporting_sources"
+        source_field=lambda wc: exp_name.lower() + "_supporting_sources",
     shell:
         "{params.rck_adj_stats} survivor-stat {input} --sources-field {params.source_field} -o {output} &> {log}"
 
