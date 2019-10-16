@@ -119,7 +119,7 @@ rule samples_stats:
     log: os.path.join(cross_samples_output_dir_stats, "log", "{sample}.{suffix}.samples.txt.log")
     params:
         rck_adj_stats=tools_methods["rck"]["rck_adj_stats"]["path"],
-        source_field=lambda wc: exp_name.lower() + "_supporting_sources",
+        source_field=lambda wc: wc.sample.lower() + "_supporting_sources",
     shell:
         "{params.rck_adj_stats} survivor-stat {input} --sources-field {params.source_field} -o {output} &> {log}"
 
