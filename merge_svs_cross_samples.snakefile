@@ -140,15 +140,16 @@ rule unique_rck:    # only for original samples
             from rck.core.io import read_adjacencies_from_file, EXTERNAL_NA_ID, write_adjacencies_to_file
             original = read_adjacencies_from_file(file_name=input.original)
             exp_sens = read_adjacencies_from_file(file_name=input.exp_sens)
-            exp_sens_supporting_ids_pairing = defaultdict(list)
+            exp_sens_ids_to_sources = defaultdict(list)
             for adj in exp_sens:
                 supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
-                for id1, id2 in itertools.permutations(supporting_ids, r=2):
-                    exp_sens_supporting_ids_pairing[id1].append(id2)
+                supporting_sources = adj.extra.get(exp_name.lower() + "_supporting_sources").split(",")
+                for aid_id in supporting_ids:
+                    exp_sens_ids_to_sources[aid_id] = supporting_sources
             unique = []
             for adj in original:
-                merged_with = exp_sens_supporting_ids_pairing.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
-                if len(merged_with) == 0:
+                merged_with = exp_sens_ids_to_sources.get(adj.extra.get(EXTERNAL_NA_ID, adj.stable_id_non_phased), [])
+                if len(merged_with) == 1:
                     unique.append(adj)
             write_adjacencies_to_file(file_name=output[0], adjacencies=unique)
 
