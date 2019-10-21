@@ -197,7 +197,7 @@ rule spes_experiment_rck: # for overall experiment sv set only
     log:    os.path.join(cross_samples_output_dir_rck, "log", exp_name + ".spes.rck.adj.tsv")
     run:
         import sys
-
+        from rck.core.io import EXTERNAL_NA_ID, write_adjacencies_to_file, stream_adjacencies_from_source
         def spes_filter(adjacencies, spes_original_ids):
             for adj in adjacencies:
                 supporting_ids = adj.extra.get(exp_name.lower() + "_supporting_source_ids").split(",")
