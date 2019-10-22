@@ -96,7 +96,7 @@ rule rck_to_vcf: # for all SV sets
         rck_adj_rck2x=tools_methods["rck"]["rck_adj_rck2x"]["path"],
         dummy_clone=lambda wc: wc.sample + "_" + wc.suffix,
         ref_extra=lambda wc: cross_samples_to_refs[wc.sample] if wc.sample in cross_samples_to_refs else ",".join(cross_samples_to_refs.values()),
-        alt_extra=lambda wc: cross_samples_to_refs[wc.sample] if wc.sample in cross_samples_to_alts else ",".join(cross_samples_to_alts.values()),
+        alt_extra=lambda wc: cross_samples_to_alts[wc.sample] if wc.sample in cross_samples_to_alts else ",".join(cross_samples_to_alts.values()),
         gt_dummy_extra=lambda wc: cross_samples_to_gt[wc.sample] if wc.sample in cross_samples_to_gt else ",".join(cross_samples_to_gt.values()),
     shell:
         "{params.rck_adj_rck2x} vcf-sniffles {input} --dummy-clone {params.dummy_clone} --dummy-clone-gt-extra {params.gt_dummy_extra} -o {output} --ref-extra {params.ref_extra} --alt-extra {params.alt_extra} &> {log}"
