@@ -283,10 +283,17 @@ rule sens_original_rck_survivor_suitable:
 rule generate_original_sample_sens_spes_rck_from_generic:
     output: os.path.join("{sample}_EnsembleSV", "rck", "{sample}.{suffix}.rck.adj.tsv")
     input:  lambda wc: config["data_input"]["cross_samples"].get(wc.sample, {}).get("rck", {}).get("path", cross_samples_to_bases[wc.sample] + "rck.adj.tsv")
+    shell:
+        "cp {input} {output}"
+
 
 rule generate_original_sample_generic_rck_from_vcf:
     output: os.path.join("{sample}_EnsembleSV", "rck", "{sample}.rck.adj.tsv")
     input:  lambda wc: config["data_input"]["cross_samples"].get(wc.sample, {}).get("vcf", {}).get("path", cross_samples_to_bases[wc.sample] + "vcf")
+    params:
+        rck_adj_x2rck=tools_methods["rck"]["rck_adj_x2rck"]["path"],
+    shell:
+        "{params.rck_adj_x2rck} sniffles {input} -o {output}"
 
 
 ruleorder: unique_rck > annotated_rck
